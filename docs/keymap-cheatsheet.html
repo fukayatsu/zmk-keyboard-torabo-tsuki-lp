@@ -1,0 +1,253 @@
+<!doctype html>
+<html lang="ja" data-theme="light"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>torabo-tsuki LP キーマップ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+  /* Layout: レイヤーごとに実機の物理配置 (ZMK physical layout 座標) をそのまま描いたキーボード図を縦に並べる */
+  :root {
+    --bg: #eef0f3;
+    --surface: #ffffff;
+    --ink: #1d232b;
+    --muted: #66707c;
+    --line: #c9ced6;
+    --cap: #f7f8fa;
+    --cap-edge: #b8bfc9;
+    --cap-ghost: #eceef1;
+    --mod: #dfe7f5;     --mod-ink: #27467a;
+    --layer: #ffe6c7;   --layer-ink: #8a4a00;
+    --mouse: #dcf1e6;   --mouse-ink: #1f6644;
+    --sys: #f1e0f3;     --sys-ink: #6d2f78;
+    --held: #e07b00;
+    --ball: #b3262e;
+    --dial: #3a4350;
+    --font-body: "IBM Plex Sans JP", "Hiragino Sans", "Yu Gothic", system-ui, sans-serif;
+    --font-key: "JetBrains Mono", "IBM Plex Sans JP", ui-monospace, monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15181d; --surface: #1d2128; --ink: #e7eaee; --muted: #98a1ad; --line: #353b45;
+      --cap: #2a2f38; --cap-edge: #454c58; --cap-ghost: #22262d;
+      --mod: #24324a; --mod-ink: #a9c3ee;
+      --layer: #3f2c12; --layer-ink: #ffc27a;
+      --mouse: #1c3a2c; --mouse-ink: #8fd9b1;
+      --sys: #3a2440; --sys-ink: #e0aee8;
+      --held: #ff9d2e; --ball: #d9434c; --dial: #a9b3c1;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #15181d; --surface: #1d2128; --ink: #e7eaee; --muted: #98a1ad; --line: #353b45;
+    --cap: #2a2f38; --cap-edge: #454c58; --cap-ghost: #22262d;
+    --mod: #24324a; --mod-ink: #a9c3ee;
+    --layer: #3f2c12; --layer-ink: #ffc27a;
+    --mouse: #1c3a2c; --mouse-ink: #8fd9b1;
+    --sys: #3a2440; --sys-ink: #e0aee8;
+    --held: #ff9d2e; --ball: #d9434c; --dial: #a9b3c1;
+    color-scheme: dark;
+  }
+
+  body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.6; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding-block: 28px 48px;
+          padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+          display: grid; gap: 22px; }
+  header { display: grid; gap: 6px; }
+  h1 { font-size: 1.7rem; margin: 0; line-height: 1.25; text-wrap: balance; letter-spacing: .01em; }
+  .meta { color: var(--muted); margin: 0; max-width: 70ch; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: .85rem; color: var(--muted); align-items: center; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sw { width: 16px; height: 16px; border-radius: 4px; border: 1px solid var(--cap-edge); display: inline-block; }
+  .sw.mod { background: var(--mod); } .sw.layer { background: var(--layer); } .sw.mouse { background: var(--mouse); }
+  .sw.sys { background: var(--sys); } .sw.ghost { background: var(--cap-ghost); border-style: dashed; }
+  .sw.held { background: var(--cap); border: 2px solid var(--held); }
+
+  section.layer { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px 12px; display: grid; gap: 8px; min-width: 0; }
+  .lh { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; }
+  .lh h2 { margin: 0; font-size: 1.15rem; }
+  .lh .num { font-family: var(--font-key); font-size: .8rem; color: var(--muted); letter-spacing: .06em; text-transform: uppercase; }
+  .lh .how { color: var(--muted); font-size: .9rem; }
+  .board { overflow-x: auto; }
+  .board svg { display: block; width: 100%; min-width: 620px; height: auto; }
+  .dialnote { font-size: .85rem; color: var(--muted); margin: 0; }
+  .dialnote b { color: var(--ink); font-weight: 500; }
+
+  svg .cap { fill: var(--cap); stroke: var(--cap-edge); stroke-width: 1.5; }
+  svg .cap.mod { fill: var(--mod); } svg .cap.layer { fill: var(--layer); }
+  svg .cap.mouse { fill: var(--mouse); } svg .cap.sys { fill: var(--sys); }
+  svg .cap.ghost { fill: var(--cap-ghost); stroke-dasharray: 6 5; }
+  svg .cap.trans { fill: var(--cap-ghost); stroke: var(--line); }
+  svg .cap.held { stroke: var(--held); stroke-width: 5; }
+  svg text { font-family: var(--font-key); fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
+  svg text.sub { fill: var(--muted); font-size: 15px; }
+  svg text.hold { font-size: 14px; }
+  svg .mod-t text { fill: var(--mod-ink); } svg .layer-t text { fill: var(--layer-ink); }
+  svg .mouse-t text { fill: var(--mouse-ink); } svg .sys-t text { fill: var(--sys-ink); }
+  svg .ball { fill: var(--ball); }
+  svg .ball-hl { fill: #ffffff; opacity: .28; }
+  svg .dial-ring { fill: var(--cap); stroke: var(--dial); stroke-width: 4; }
+  svg .dial-knob { fill: none; stroke: var(--dial); stroke-width: 1.5; stroke-dasharray: 3 5; }
+  svg text.side { font-family: var(--font-body); fill: var(--muted); font-size: 22px; letter-spacing: .1em; }
+
+  footer { color: var(--muted); font-size: .85rem; display: grid; gap: 4px; }
+  footer p { margin: 0; max-width: 80ch; }
+  code { font-family: var(--font-key); font-size: .85em; }
+</style>
+<style>
+  @media print {
+    @page { size: A4 landscape; margin: 8mm; }
+    html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { background: #fff; font-size: 11px; }
+    .wrap { max-width: none; padding: 0; gap: 3mm; }
+    h1 { font-size: 18px; }
+    .meta, .legend { font-size: 10px; }
+    section.layer { break-inside: avoid; padding: 2mm 4mm 1.5mm; gap: 0.5mm; border-radius: 8px; }
+    .board svg { min-width: 0; width: 200mm; margin: 0 auto; }
+    .lh h2 { font-size: 14px; }
+    .dialnote, footer { font-size: 9.5px; }
+    #layer-2, #layer-4 { break-before: page; }
+  }
+</style>
+</head><body>
+
+<div class="wrap">
+  <header>
+    <h1>torabo-tsuki LP (L) キーマップ</h1>
+    <p class="meta">右トラックボール・左に高分解能ダイヤル。Keyball61-Dual の配置を移したもの。キーの位置は実機の配置どおりです。記号は ⌃ Ctrl / ⇧ Shift / ⌥ Alt(Option) / ⌘ Win(Command)。</p>
+    <div class="legend" aria-label="凡例">
+      <span><i class="sw mod"></i>修飾キー・ショートカット</span>
+      <span><i class="sw layer"></i>レイヤー切替(長押し)</span>
+      <span><i class="sw mouse"></i>マウス</span>
+      <span><i class="sw sys"></i>接続・Bluetooth</span>
+      <span><i class="sw held"></i>このレイヤー中に押さえているキー</span>
+      <span><i class="sw ghost"></i>割り当てなし</span>
+    </div>
+  </header>
+  <div id="layers"></div>
+  <footer>
+    <p>ダイヤルを押すと縦スクロールと横スクロールが切り替わります(Layer 1 HScroll のオン・オフ)。横のときもキーは Base と同じです。</p>
+    <p>空欄のキーは下のレイヤー(Base)と同じ動作です。Keyball61 のマクロ位置は未割当です。</p>
+    <p>左 ⌘ を単独で押すと英数、右 ⌘ を単独で押すとかなになるのは Mac の Karabiner-Elements の設定によるもので、キーボード側の設定ではありません。</p>
+    <p>設定ファイル: <code>fukayatsu/zmk-keyboard-torabo-tsuki-lp</code> の <code>config/keymap.keymap</code>(ダイヤルのスクロール速度は <code>48 1</code>)。</p>
+  </footer>
+</div>
+
+<script>
+// ZMK physical layout (L size). [x, y, rot(1/100 deg), rx, ry] in 1/100 key units.
+const P = [
+  [0,60],[100,60],[200,25],[300,0],[400,13],[500,25],[1050,25],[1150,13],[1250,0],[1350,25],[1450,60],[1550,60],
+  [0,160],[100,160],[200,125],[300,100],[400,113],[500,125],[1050,125],[1150,113],[1250,100],[1350,125],[1450,160],[1550,160],
+  [0,260],[100,260],[200,225],[300,200],[400,213],[500,225],[600,240],[950,240],[1050,225],[1150,213],[1250,200],[1350,225],[1450,260],[1550,260],
+  [0,360],[100,360],[200,325],[300,300],[400,313],[500,325],[600,340],[950,340],[1050,325],[1150,313],[1250,300],[1350,325],[1450,360],[1550,360],
+  [0,460],[100,460],[200,425],[300,400],[415,450],[520,450,1000,520,550],[622,471,2000,625,570],[928,471,-2000,1025,570],[1030,450,-1000,1130,550],
+  [1135,450],[1250,400],[1350,425],[1450,460],[1550,460]
+];
+const DIAL = 30, BALL = [61, 62];
+
+// key: [main, sub(top), cls, hold(bottom)]
+const K = (m, s = "", c = "", h = "") => ({ m, s, c, h });
+const NONE = K("", "", "ghost");
+
+function base() {
+  const a = Array(66).fill(null);
+  const set = (i, k) => (a[i] = k);
+  [[0,K("Esc")],[1,K("1","⌃","mod")],[2,K("2","⌃","mod")],[3,K("F3")],[4,K("左クリック","","mouse")],[5,K("右クリック","","mouse")],
+   [6,K("BS")],[7,K("F7")],[8,K("F12")],[9,K("音量−")],[10,K("音量+")],[11,K("=","+")],
+   [12,K("`","~")],[13,K("Q")],[14,K("W")],[15,K("E")],[16,K("R")],[17,K("T")],
+   [18,K("Y")],[19,K("U")],[20,K("I")],[21,K("O")],[22,K("P")],[23,K("-","_")],
+   [24,K("⌃ Ctrl","","mod")],[25,K("A")],[26,K("S")],[27,K("D")],[28,K("F")],[29,K("G")],[31,NONE],
+   [32,K("H")],[33,K("J")],[34,K("K")],[35,K("L")],[36,K(";",":")],[37,K("'",'"')],
+   [38,K("⇧ Shift","","mod")],[39,K("Z")],[40,K("X")],[41,K("C")],[42,K("V")],[43,K("B")],
+   [44,K("Tab","","layer","長押し BT")],[45,K("⇧ Shift","","mod")],
+   [46,K("N")],[47,K("M")],[48,K(",","<")],[49,K(".",">")],[50,K("/","?")],[51,K("\\","|")],
+   [52,K("⌥ Alt","","mod")],[53,K("Space","⇧⌘","mod")],[54,NONE],[55,K("右クリック","","mouse")],[56,K("左クリック","","mouse")],
+   [57,K("⌘","単独で英数","mod")],[58,K("Space")],[59,K("Enter","","layer","長押し Nav")],[60,K("⌘","単独でかな","layer","長押し Num")],
+   [63,NONE],[64,K("Space","⇧⌥⌘","mod")],[65,K("左クリック","","mouse")]
+  ].forEach(([i, k]) => set(i, k));
+  return a;
+}
+function over(pairs, held) {
+  const a = Array(66).fill(null).map(() => K("", "", "trans"));
+  pairs.forEach(([i, k]) => (a[i] = k));
+  [31,54,63].forEach(i => { if (a[i].c === "trans") a[i] = NONE; });
+  a[held] = { ...a[held], c: "trans held", m: "", s: "", h: "押さえる" };
+  return a;
+}
+
+const layers = [
+  { n: 0, name: "Base", how: "通常時", keys: base(), held: null,
+    dial: ["縦スクロール", "縦横切替"] },
+  { n: 2, name: "Num", how: "右親指の「⌘」を長押し", held: 60,
+    keys: over([[13,K("!")],[14,K("@")],[15,K("#")],[16,K("$")],[17,K("%")],
+      [18,K("^")],[19,K("&")],[20,K("*")],[21,K("(")],[22,K(")")],
+      [25,K("1")],[26,K("2")],[27,K("3")],[28,K("4")],[29,K("5")],
+      [32,K("{")],[33,K("}")],[34,K("[")],[35,K("]")],[36,K(":")],[37,K("→","⌥","mod")],
+      [39,K("0")],[40,K("9")],[41,K("8")],[42,K("7")],[43,K("6")],
+      [44,K("Tab","⇧","mod")],[45,K("Space","⇧⌥","mod")],[51,K("↓","⇧⌥","mod")]], 60),
+    dial: ["横スクロール", "縦横切替"] },
+  { n: 3, name: "Nav", how: "右親指の「Enter」を長押し", held: 59,
+    keys: over([[6,K("Del","⌃","mod")],[14,K("@")],[16,K("4","⇧⌘","mod")],[42,K("V","⇧⌘","mod")],
+      [18,K("[","⌘","mod")],[21,K("]","⌘","mod")],[22,K("P","⇧⌘","mod")],
+      [32,K("←")],[33,K("↓")],[34,K("↑")],[35,K("→")],[36,K("[","⇧⌘","mod")],[37,K("]","⇧⌘","mod")],
+      [46,K("H","⌃⇧⌥","mod")],[47,K("J","⌃⇧⌥","mod")],[48,K("K","⌃⇧⌥","mod")],[49,K("L","⌃⇧⌥","mod")],[50,K("/","⌃⇧⌥","mod")]], 59),
+    dial: ["音量 +/−", "縦横切替"] },
+  { n: 4, name: "BT", how: "左手内側の「Tab」を長押し", held: 44,
+    keys: over([[18,K("BT 0","接続先","sys")],[19,K("BT 1","接続先","sys")],[20,K("BT 2","接続先","sys")],[21,K("BT 3","接続先","sys")],[22,K("BT 4","接続先","sys")],
+      [32,K("USB","出力","sys")],[33,K("BLE","出力","sys")],[50,K("解除","今のBT","sys")]], 44),
+    dial: ["Base と同じ", "縦横切替"] },
+];
+
+const NS = "http://www.w3.org/2000/svg";
+const el = (t, attrs = {}, txt) => { const e = document.createElementNS(NS, t); for (const k in attrs) e.setAttribute(k, attrs[k]); if (txt != null) e.textContent = txt; return e; };
+const w = s => [...s].reduce((n, ch) => n + (/[　-鿿＀-￯]/.test(ch) ? 1 : 0.62), 0);
+const fit = (s, max, room) => Math.min(max, room / Math.max(w(s), 0.01));
+
+function keyGroup(i, k) {
+  const [x, y, r = 0, rx = 0, ry = 0] = P[i];
+  const g = el("g", r ? { transform: `rotate(${r / 100} ${rx} ${ry})` } : {});
+  const cls = k.c.split(" ");
+  const tone = cls.find(c => ["mod", "layer", "mouse", "sys"].includes(c));
+  if (tone) g.setAttribute("class", tone + "-t");
+  g.append(el("rect", { x: x + 4, y: y + 4, width: 92, height: 92, rx: 12, class: "cap " + k.c }));
+  if (k.s) g.append(el("text", { x: x + 50, y: y + 24, class: "sub", "font-size": fit(k.s, 15, 80) }, k.s));
+  if (k.m) {
+    const cy = k.s && k.h ? y + 52 : k.s ? y + 58 : k.h ? y + 44 : y + 50;
+    g.append(el("text", { x: x + 50, y: cy, "font-size": fit(k.m, 30, 80), "font-weight": 700 }, k.m));
+  }
+  if (k.h) g.append(el("text", { x: x + 50, y: k.m ? y + 78 : y + 50, class: "hold", "font-size": fit(k.h, 14, 82) }, k.h));
+  g.append(el("title", {}, [k.s, k.m, k.h].filter(Boolean).join(" ") || (k.c.includes("ghost") ? "割り当てなし" : "下のレイヤーと同じ")));
+  return g;
+}
+
+function board(L) {
+  const svg = el("svg", { viewBox: "-10 -10 1670 625", role: "img", "aria-label": `Layer ${L.n} ${L.name} の配置` });
+  svg.append(el("text", { x: 300, y: 600, class: "side" }, "左手"), el("text", { x: 1350, y: 600, class: "side" }, "右手"));
+  L.keys.forEach((k, i) => { if (i !== DIAL && !BALL.includes(i) && k) svg.append(keyGroup(i, k)); });
+  // dial (position 30)
+  const [dx, dy] = P[DIAL];
+  const dg = el("g");
+  dg.append(el("circle", { cx: dx + 50, cy: dy + 50, r: 46, class: "dial-ring" }), el("circle", { cx: dx + 50, cy: dy + 50, r: 38, class: "dial-knob" }));
+  dg.append(el("text", { x: dx + 50, y: dy + 38, "font-size": fit(L.dial[0], 16, 70), "font-weight": 700 }, L.dial[0]));
+  dg.append(el("text", { x: dx + 50, y: dy + 64, class: "sub", "font-size": fit("押: " + L.dial[1], 12, 66) }, "押: " + L.dial[1]));
+  dg.append(el("title", {}, `ダイヤル 回転: ${L.dial[0]} / 押し込み: ${L.dial[1]}`));
+  svg.append(dg);
+  // trackball (replaces 61, 62)
+  svg.append(el("circle", { cx: 1205, cy: 505, r: 66, class: "ball" }), el("circle", { cx: 1183, cy: 482, r: 18, class: "ball-hl" }));
+  return svg;
+}
+
+const root = document.getElementById("layers");
+root.style.display = "grid"; root.style.gap = "22px";
+layers.forEach(L => {
+  const s = document.createElement("section"); s.className = "layer"; s.id = "layer-" + L.n;
+  s.innerHTML = `<div class="lh"><span class="num">Layer ${L.n}</span><h2>${L.name}</h2><span class="how">${L.how}</span></div>`;
+  const b = document.createElement("div"); b.className = "board"; b.append(board(L)); s.append(b);
+  const p = document.createElement("p"); p.className = "dialnote";
+  p.innerHTML = `ダイヤル: 回すと <b>${L.dial[0]}</b>、押すと <b>${L.dial[1]}</b>`;
+  s.append(p); root.append(s);
+});
+</script>
+</body></html>
