@@ -13,7 +13,7 @@
  *  52 53 54 55   56 57 58     59 60 (61 62) 63 64 65
  *                                    ^ボールで潰れる
  *  [30] = ダイヤルに置換 (スイッチなし)
- *  66 = ダイヤル押し込み / 回転は末尾の sensor-bindings で設定
+ *  66 = ダイヤル押し込み (縦/横スクロールのトグル) / 回転は末尾の sensor-bindings で設定
  */
 
 #include <behaviors.dtsi>
@@ -31,22 +31,38 @@
         compatible = "zmk,keymap";
 
         // Layer 0: base
-        layer_0 {
+        base {
             display-name = "Base";
             bindings = <
 &kp ESC    &kp LC(N1)         &kp LC(N2)  &kp F3   &mkp LCLK  &mkp RCLK                                                                &kp BSPC  &kp F7  &kp F12    &kp C_VOL_DN  &kp C_VOL_UP              &kp EQUAL
 &kp GRAVE  &kp Q              &kp W       &kp E    &kp R      &kp T                                                                    &kp Y     &kp U   &kp I      &kp O         &kp P                     &kp MINUS
 &kp LCTRL  &kp A              &kp S       &kp D    &kp F      &kp G      &none                                &none                    &kp H     &kp J   &kp K      &kp L         &kp SEMI                  &kp SQT
-&kp LSHFT  &kp Z              &kp X       &kp C    &kp V      &kp B      &lt 3 TAB                            &kp RSHFT                &kp N     &kp M   &kp COMMA  &kp DOT       &kp FSLH                  &kp BSLH
-&kp LALT   &kp LS(LG(SPACE))  &none       &none    &none      &kp LGUI   &kp SPACE    &lt 2 RET  &lt 1 LANG1  &none                    &none     &none   &kp LS(LA(LG(SPACE)))   &mkp LCLK
+&kp LSHFT  &kp Z              &kp X       &kp C    &kp V      &kp B      &lt 4 TAB                            &kp RSHFT                &kp N     &kp M   &kp COMMA  &kp DOT       &kp FSLH                  &kp BSLH
+&kp LALT   &kp LS(LG(SPACE))  &none       &mkp RCLK &mkp LCLK &kp LGUI   &kp SPACE    &lt 3 RET  &lt 2 RGUI   &none                    &none     &none   &kp LS(LA(LG(SPACE)))   &mkp LCLK
 #if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
-&mkp MCLK
+&tog 1
 #endif
             >;
         };
 
-        // Layer 1: 数字・記号 (右親指 Lang1 長押し)
-        layer_1 {
+        // Layer 1: ダイヤル横スクロール (ダイヤル押し込みでトグル)
+        //   Base の直上に置くので、Num / Nav 中はそちらのダイヤル設定が優先される
+        hscroll {
+            display-name = "HScroll";
+            bindings = <
+&trans  &trans  &trans  &trans  &trans  &trans                                                  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                                                  &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &trans  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans         &trans  &trans  &trans           &trans  &trans  &trans  &trans
+#if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
+&trans
+#endif
+            >;
+        };
+
+        // Layer 2: 数字・記号 (右親指 ⌘ 長押し)
+        num {
             display-name = "Num";
             bindings = <
 &trans  &trans    &trans   &trans    &trans    &trans                                                   &trans     &trans    &trans    &trans    &trans     &trans
@@ -60,9 +76,9 @@
             >;
         };
 
-        // Layer 2: カーソル・ショートカット (右親指 Enter 長押し)
+        // Layer 3: カーソル・ショートカット (右親指 Enter 長押し)
         //   Macro0-4 の位置は &trans のまま
-        layer_2 {
+        nav {
             display-name = "Nav";
             bindings = <
 &trans  &trans  &trans  &trans  &trans          &trans                                                  &kp LC(DEL)         &trans              &trans              &trans              &trans                 &trans
@@ -76,8 +92,8 @@
             >;
         };
 
-        // Layer 3: (Keyball61 では空) 無線用に BT / 出力切替を右手側に配置 (左 Tab 長押し)
-        layer_3 {
+        // Layer 4: (Keyball61 では空) 無線用に BT / 出力切替を右手側に配置 (左 Tab 長押し)
+        bt {
             display-name = "BT";
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans                                                  &trans          &trans          &trans          &trans          &trans          &trans
@@ -94,20 +110,22 @@
 };
 
 #if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
-// ダイヤル回転 (<入力 出力>: 48 1 = 48カウントで1段, 1回転≒26段) : Base=縦スクロール / Num=横スクロール / Nav=音量 / BT=Base と同じ
-&{/keymap/layer_0} {
+// ダイヤル回転 (<入力 出力>: 48 1 = 48カウントで1段, 1回転≒26段)
+//   Base=縦スクロール / HScroll=横スクロール / Num=横スクロール / Nav=音量
+//   BT は設定なし (下のレイヤーの設定がそのまま使われる)
+&{/keymap/base} {
     sensor-bindings = <&hires_dial_scroll 48 1>;
 };
 
-&{/keymap/layer_1} {
+&{/keymap/hscroll} {
     sensor-bindings = <&hires_dial_hscroll 48 1>;
 };
 
-&{/keymap/layer_2} {
-    sensor-bindings = <&hires_dial_encoder C_VOL_UP C_VOL_DN>;
+&{/keymap/num} {
+    sensor-bindings = <&hires_dial_hscroll 48 1>;
 };
 
-&{/keymap/layer_3} {
-    sensor-bindings = <&hires_dial_scroll 48 1>;
+&{/keymap/nav} {
+    sensor-bindings = <&hires_dial_encoder C_VOL_UP C_VOL_DN>;
 };
 #endif
