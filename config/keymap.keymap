@@ -94,13 +94,13 @@
 };
 
 #if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
-// ダイヤル回転 (<入力 出力>: 4 1 = 1/4 速) : Base=縦スクロール / Num=横スクロール / Nav=音量 / BT=Base と同じ
+// ダイヤル回転 (<入力 出力>: 48 1 = 48カウントで1段, 1回転≒26段) : Base=縦スクロール / Num=横スクロール / Nav=音量 / BT=Base と同じ
 &{/keymap/layer_0} {
-    sensor-bindings = <&hires_dial_scroll 4 1>;
+    sensor-bindings = <&hires_dial_scroll 48 1>;
 };
 
 &{/keymap/layer_1} {
-    sensor-bindings = <&hires_dial_hscroll 4 1>;
+    sensor-bindings = <&hires_dial_hscroll 48 1>;
 };
 
 &{/keymap/layer_2} {
@@ -108,6 +108,6 @@
 };
 
 &{/keymap/layer_3} {
-    sensor-bindings = <&hires_dial_scroll 4 1>;
+    sensor-bindings = <&hires_dial_scroll 48 1>;
 };
 #endif
