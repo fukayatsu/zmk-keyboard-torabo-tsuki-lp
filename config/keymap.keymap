@@ -42,15 +42,6 @@
                 , <&macro_release &kp LGUI>
                 ;
         };
-
-        // Markdown のチェックボックス "- [ ] " を入力
-        md_task: md_task {
-            compatible = "zmk,behavior-macro";
-            #binding-cells = <0>;
-            wait-ms = <10>;
-            tap-ms = <10>;
-            bindings = <&macro_tap &kp MINUS &kp SPACE &kp LBKT &kp SPACE &kp RBKT &kp SPACE>;
-        };
     };
 
     keymap {
@@ -104,11 +95,12 @@
 
         // Layer 3: カーソル・ショートカット (右親指 Enter 長押し / 左 55 を押している間)
         //   Macro0-4 の位置は &trans のまま
+        //   23 = F20 → Karabiner が "- [ ] " を入力 (かなモードなら英数にして入力後かなに戻す)
         nav {
             display-name = "Nav";
             bindings = <
 &trans  &trans  &trans  &trans  &trans          &trans                                                  &kp LC(DEL)         &trans              &trans              &trans              &trans                 &trans
-&trans  &trans  &kp AT  &trans  &kp LS(LG(N4))  &trans                                                  &kp LG(LBKT)        &trans              &trans              &kp LG(RBKT)        &kp LS(LG(P))          &md_task
+&trans  &trans  &kp AT  &trans  &kp LS(LG(N4))  &trans                                                  &kp LG(LBKT)        &trans              &trans              &kp LG(RBKT)        &kp LS(LG(P))          &kp F20 
 &trans  &trans  &trans  &trans  &trans          &trans  &trans                         &trans           &kp LEFT            &kp DOWN            &kp UP              &kp RIGHT           &kp LS(LG(LBKT))       &kp LS(LG(RBKT))
 &trans  &trans  &trans  &trans  &kp LS(LG(V))   &trans  &trans                         &trans           &none               &none               &none               &none               &none                  &trans
 &trans  &trans  &trans  &trans  &trans          &trans  &trans         &trans  &trans  &trans           &trans              &trans              &trans              &trans
