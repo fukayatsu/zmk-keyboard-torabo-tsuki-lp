@@ -84,6 +84,7 @@
   svg text { font-family: var(--font-key); fill: var(--ink); text-anchor: middle; dominant-baseline: central; }
   svg text.sub { fill: var(--muted); font-size: 15px; }
   svg text.hold { font-size: 14px; }
+  svg text.pos { font-family: var(--font-body); fill: var(--muted); font-size: 11px; text-anchor: start; opacity: .8; }
   svg .mod-t text { fill: var(--mod-ink); } svg .layer-t text { fill: var(--layer-ink); }
   svg .mouse-t text { fill: var(--mouse-ink); } svg .sys-t text { fill: var(--sys-ink); }
   svg .ball { fill: var(--ball); }
@@ -215,7 +216,8 @@ function keyGroup(i, k) {
   const tone = cls.find(c => ["mod", "layer", "mouse", "sys"].includes(c));
   if (tone) g.setAttribute("class", tone + "-t");
   g.append(el("rect", { x: x + 4, y: y + 4, width: 92, height: 92, rx: 12, class: "cap " + k.c }));
-  if (k.s) g.append(el("text", { x: x + 50, y: y + 24, class: "sub", "font-size": fit(k.s, 15, 80) }, k.s));
+  g.append(el("text", { x: x + 12, y: y + 16, class: "pos" }, i));
+  if (k.s) g.append(el("text", { x: x + 50, y: y + 29, class: "sub", "font-size": fit(k.s, 14, 72) }, k.s));
   if (k.m) {
     const cy = k.s && k.h ? y + 52 : k.s ? y + 58 : k.h ? y + 44 : y + 50;
     g.append(el("text", { x: x + 50, y: cy, "font-size": fit(k.m, 30, 80), "font-weight": 700 }, k.m));
@@ -235,6 +237,7 @@ function board(L) {
   dg.append(el("circle", { cx: dx + 50, cy: dy + 50, r: 46, class: "dial-ring" }), el("circle", { cx: dx + 50, cy: dy + 50, r: 38, class: "dial-knob" }));
   dg.append(el("text", { x: dx + 50, y: dy + 38, "font-size": fit(L.dial[0], 16, 70), "font-weight": 700 }, L.dial[0]));
   dg.append(el("text", { x: dx + 50, y: dy + 64, class: "sub", "font-size": fit("押: " + L.dial[1], 12, 66) }, "押: " + L.dial[1]));
+  dg.append(el("text", { x: dx + 102, y: dy + 40, class: "pos" }, "30"), el("text", { x: dx + 102, y: dy + 58, class: "pos" }, "押 66"));
   dg.append(el("title", {}, `ダイヤル 回転: ${L.dial[0]} / 押し込み: ${L.dial[1]}`));
   svg.append(dg);
   // trackball (replaces 61, 62)
