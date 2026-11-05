@@ -98,17 +98,20 @@
 </style>
 <style>
   @media print {
-    @page { size: A4 landscape; margin: 8mm; }
+    @page { size: A4 portrait; margin: 8mm; }
     html, body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     body { background: #fff; font-size: 11px; }
-    .wrap { max-width: none; padding: 0; gap: 3mm; }
+    .wrap { max-width: none; padding: 0; gap: 2.5mm; }
     h1 { font-size: 18px; }
-    .meta, .legend { font-size: 10px; }
+    .meta, .legend { font-size: 9px; }
+    header { gap: 1mm; }
+    .legend { gap: 2px 10px; }
+    .sw { width: 11px; height: 11px; }
     section.layer { break-inside: avoid; padding: 2mm 4mm 1.5mm; gap: 0.5mm; border-radius: 8px; }
-    .board svg { min-width: 0; width: 200mm; margin: 0 auto; }
+    .board svg { min-width: 0; width: 166mm; margin: 0 auto; }
     .lh h2 { font-size: 14px; }
     .dialnote, footer { font-size: 9.5px; }
-    #layer-2, #layer-4 { break-before: page; }
+    #layer-4 { break-before: page; }
   }
 </style>
 </head><body>
