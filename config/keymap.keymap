@@ -145,6 +145,6 @@
 };
 
 &{/keymap/nav} {
-    sensor-bindings = <&hires_dial_encoder C_VOL_DN C_VOL_UP>; // invert で全体を反転しているので音量だけ元に戻す
+    sensor-bindings = <&hires_dial_encoder C_VOL_UP C_VOL_DN>;
 };
 #endif

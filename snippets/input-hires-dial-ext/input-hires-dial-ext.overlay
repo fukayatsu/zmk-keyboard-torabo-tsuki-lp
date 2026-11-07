@@ -117,7 +117,6 @@
         res-cpi = <1275>;
         counts-per-revolution = <1275>;
         motion-read-interval-ms = <8>;
-        invert; // 回転方向を反転 (スクロール・音量とも)
         motion-gpios = <&gpio0 31 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         power-gpios = <&gpio0 24 (GPIO_ACTIVE_HIGH | NRF_GPIO_DRIVE_H0H1)>;
         sleep1-enable;
