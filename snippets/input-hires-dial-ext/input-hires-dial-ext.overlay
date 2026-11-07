@@ -5,8 +5,8 @@
  *     SDA 18 → 17 / SCL 16 → 21 / motion 20 → 31 / button 19 → 29 / power 8 → 24
  *   メインFFC側が spi0 を使うので、ダイヤルは i2c1 (TWIM1) に載せる
  *
- * ダイヤル押し込みは kscan 座標 (5,5)。右手側 (TORABO_TSUKI_LP_RIGHT) では matrix-transform の col-offset(7) が
- * 加算されるため、レイアウト側では TORABO_TSUKI_LP_HIRES_DIAL_ON_EXT のとき RC(5,12) を参照する
+ * ダイヤル押し込みはレイアウト上 RC(5,5)。右手側の列オフセット(7) を matrix-transform ではなく
+ * composite の matrix 側で付けることで、左右どちらに付けても RC(5,5) になるようにしている
  */
 #include <zephyr/dt-bindings/gpio/gpio.h>
 #include <zephyr/dt-bindings/i2c/i2c.h>
@@ -27,11 +27,11 @@
     kscan_hires_dial_composite: kscan_hires_dial_composite {
         compatible = "zmk,kscan-composite";
         rows = <6>;
-        columns = <7>;
+        columns = <14>;
 
-        // 列オフセットは matrix-transform 側 (size_*_transform の col-offset) で付与される
         matrix {
             kscan = <&kscan0>;
+            col-offset = <TORABO_TSUKI_LP_MATRIX_COL_OFFSET>;
         };
 
         dial-button {
@@ -56,6 +56,19 @@
         compatible = "zmk,input-listener";
         device = <&hires_dial_hscroll>;
     };
+};
+
+// 列オフセットは上の composite で付けるので transform 側は 0 にする (右手側は元々 7)
+&size_s_transform {
+    col-offset = <0>;
+};
+
+&size_m_transform {
+    col-offset = <0>;
+};
+
+&size_l_transform {
+    col-offset = <0>;
 };
 
 &physical_layout_s {
@@ -104,6 +117,7 @@
         res-cpi = <1275>;
         counts-per-revolution = <1275>;
         motion-read-interval-ms = <8>;
+        invert; // 回転方向を反転 (スクロール・音量とも)
         motion-gpios = <&gpio0 31 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
         power-gpios = <&gpio0 24 (GPIO_ACTIVE_HIGH | NRF_GPIO_DRIVE_H0H1)>;
         sleep1-enable;
