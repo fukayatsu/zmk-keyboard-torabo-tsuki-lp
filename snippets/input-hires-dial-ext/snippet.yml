@@ -1,0 +1,5 @@
+name: input-hires-dial-ext
+append:
+  EXTRA_DTC_OVERLAY_FILE: input-hires-dial-ext.overlay
+  EXTRA_CONF_FILE: ../input-hires-dial/input-hires-dial.conf
+  DTS_EXTRA_CPPFLAGS: -DTORABO_TSUKI_LP_INPUT_HIRES_DIAL -DTORABO_TSUKI_LP_HIRES_DIAL_ON_EXT

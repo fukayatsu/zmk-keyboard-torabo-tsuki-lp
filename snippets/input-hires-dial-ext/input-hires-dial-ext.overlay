@@ -1,0 +1,128 @@
+/*
+ * 高分解能ダイヤルを BMP Boost Extender Mini (追加IOポート) 経由で接続する
+ *   https://github.com/ngsyst/bmp_boost_extender_mini
+ *   メインFFC (トラックボール等) と同時に使う想定。ピン対応 (メインFFC → Extender Mini):
+ *     SDA 18 → 17 / SCL 16 → 21 / motion 20 → 31 / button 19 → 29 / power 8 → 24
+ *   メインFFC側が spi0 を使うので、ダイヤルは i2c1 (TWIM1) に載せる
+ *
+ * ダイヤル押し込みは kscan 座標 (5,5)。右手側 (TORABO_TSUKI_LP_RIGHT) では matrix-transform の col-offset(7) が
+ * 加算されるため、レイアウト側では TORABO_TSUKI_LP_HIRES_DIAL_ON_EXT のとき RC(5,12) を参照する
+ */
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/i2c/i2c.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <zephyr/dt-bindings/gpio/nordic-nrf-gpio.h>
+
+/ {
+    chosen {
+        zmk,kscan = &kscan_hires_dial_composite;
+    };
+
+    hires_dial_button_kscan: hires_dial_button_kscan {
+        compatible = "zmk,kscan-gpio-direct";
+        input-gpios = <&gpio0 29 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        wakeup-source;
+    };
+
+    kscan_hires_dial_composite: kscan_hires_dial_composite {
+        compatible = "zmk,kscan-composite";
+        rows = <6>;
+        columns = <7>;
+
+        // 列オフセットは matrix-transform 側 (size_*_transform の col-offset) で付与される
+        matrix {
+            kscan = <&kscan0>;
+        };
+
+        dial-button {
+            kscan = <&hires_dial_button_kscan>;
+            row-offset = <5>;
+            col-offset = <5>;
+        };
+    };
+
+    sensors {
+        compatible = "zmk,keymap-sensors";
+        sensors = <&hires_dial>;
+        triggers-per-rotation = <20>;
+    };
+
+    hires_dial_scroll_listener {
+        compatible = "zmk,input-listener";
+        device = <&hires_dial_scroll>;
+    };
+
+    hires_dial_hscroll_listener {
+        compatible = "zmk,input-listener";
+        device = <&hires_dial_hscroll>;
+    };
+};
+
+&physical_layout_s {
+    kscan = <&kscan_hires_dial_composite>;
+};
+
+&physical_layout_m {
+    kscan = <&kscan_hires_dial_composite>;
+};
+
+&physical_layout_l {
+    kscan = <&kscan_hires_dial_composite>;
+};
+
+&pinctrl {
+    i2c1_default: i2c1_default {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SDA, 0, 17)>,
+                    <NRF_PSEL(TWIM_SCL, 0, 21)>;
+            bias-pull-up;
+        };
+    };
+
+    i2c1_sleep: i2c1_sleep {
+        group1 {
+            psels = <NRF_PSEL(TWIM_SDA, 0, 17)>,
+                    <NRF_PSEL(TWIM_SCL, 0, 21)>;
+            bias-pull-up;
+            low-power-enable;
+        };
+    };
+};
+
+&i2c1 {
+    status = "okay";
+    compatible = "nordic,nrf-twim";
+    pinctrl-0 = <&i2c1_default>;
+    pinctrl-1 = <&i2c1_sleep>;
+    pinctrl-names = "default", "sleep";
+    clock-frequency = <I2C_BITRATE_FAST>;
+
+    hires_dial: hires_dial@75 {
+        status = "okay";
+        compatible = "sekigon,hires-dial";
+        reg = <0x75>;
+        res-cpi = <1275>;
+        counts-per-revolution = <1275>;
+        motion-read-interval-ms = <8>;
+        motion-gpios = <&gpio0 31 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+        power-gpios = <&gpio0 24 (GPIO_ACTIVE_HIGH | NRF_GPIO_DRIVE_H0H1)>;
+        sleep1-enable;
+        sleep2-enable;
+    };
+};
+
+&hires_dial_encoder {
+    sensor = <&hires_dial>;
+};
+
+&hires_dial_scroll {
+    sensor = <&hires_dial>;
+};
+
+&hires_dial_hscroll {
+    sensor = <&hires_dial>;
+};
+
+&hires_dial_radial_controller {
+    sensor = <&hires_dial>;
+};

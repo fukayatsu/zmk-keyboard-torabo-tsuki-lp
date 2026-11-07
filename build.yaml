@@ -1,13 +1,13 @@
 include:
-  # 右: トラックボール + central (左のダイヤルの入力を受け取る)
+  # 右: トラックボール (メインFFC) + 高分解能ダイヤル (BMP Boost Extender Mini) + central
   - board: bmp_boost
     shield: torabo_tsuki_lp_right
-    snippet: "studio-rpc-usb-uart split-central input-trackball input-listener split-input-hires-dial"
-    artifact-name: torabo_tsuki_lp_right_central_dial
-  # 左: トラックボールなし + peripheral + 高分解能ダイヤル
+    snippet: "studio-rpc-usb-uart split-central input-trackball input-listener input-hires-dial-ext"
+    artifact-name: torabo_tsuki_lp_right_central_trackball_dial
+  # 左: モジュールなし + peripheral
   - board: bmp_boost
     shield: torabo_tsuki_lp_left
-    snippet: "studio-rpc-usb-uart input-hires-dial"
-    artifact-name: torabo_tsuki_lp_left_peripheral_dial
+    snippet: "studio-rpc-usb-uart"
+    artifact-name: torabo_tsuki_lp_left_peripheral
   - board: bmp_boost
     shield: settings_reset
