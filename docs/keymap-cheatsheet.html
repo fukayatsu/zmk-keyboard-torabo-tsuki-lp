@@ -120,8 +120,8 @@
 <div class="wrap">
   <header>
     <h1>torabo-tsuki LP (L) キーマップ</h1>
-    <p class="meta version">バージョン: <time datetime="2026-11-05T20:11">2026-11-05 20:11</time></p>
-    <p class="meta">右トラックボール・左に高分解能ダイヤル。Keyball61-Dual の配置を移したもの。キーの位置は実機の配置どおりです。記号は ⌃ Ctrl / ⇧ Shift / ⌥ Alt(Option) / ⌘ Win(Command)。</p>
+    <p class="meta version">バージョン: <time datetime="2026-11-07T15:55">2026-11-07 15:55</time></p>
+    <p class="meta">右にトラックボールと高分解能ダイヤル(BMP Boost Extender Mini 経由)。Keyball61-Dual の配置を移したもの。キーの位置は実機の配置どおりです。記号は ⌃ Ctrl / ⇧ Shift / ⌥ Alt(Option) / ⌘ Win(Command)。</p>
     <div class="legend" aria-label="凡例">
       <span><i class="sw mod"></i>修飾キー・ショートカット</span>
       <span><i class="sw layer"></i>レイヤー切替(長押し)</span>
@@ -150,7 +150,7 @@ const P = [
   [0,460],[100,460],[200,425],[300,400],[415,450],[520,450,1000,520,550],[622,471,2000,625,570],[928,471,-2000,1025,570],[1030,450,-1000,1130,550],
   [1135,450],[1250,400],[1350,425],[1450,460],[1550,460]
 ];
-const DIAL = 30, BALL = [61, 62];
+const DIAL = 31, BALL = [61, 62];
 
 // key: [main, sub(top), cls, hold(bottom)]
 const K = (m, s = "", c = "", h = "") => ({ m, s, c, h });
@@ -163,7 +163,7 @@ function base() {
    [6,K("BS")],[7,K("F7")],[8,K("F12")],[9,NONE],[10,NONE],[11,K("=","+")],
    [12,K("`","~")],[13,K("Q")],[14,K("W")],[15,K("E")],[16,K("R")],[17,K("T")],
    [18,K("Y")],[19,K("U")],[20,K("I")],[21,K("O")],[22,K("P")],[23,K("-","_")],
-   [24,K("⌃ Ctrl","","mod")],[25,K("A")],[26,K("S")],[27,K("D")],[28,K("F")],[29,K("G")],[31,NONE],
+   [24,K("⌃ Ctrl","","mod")],[25,K("A")],[26,K("S")],[27,K("D")],[28,K("F")],[29,K("G")],[30,NONE],
    [32,K("H")],[33,K("J")],[34,K("K")],[35,K("L")],[36,K(";",":")],[37,K("'",'"')],
    [38,K("⇧ Shift","","mod")],[39,K("Z")],[40,K("X")],[41,K("C")],[42,K("V")],[43,K("B")],
    [44,K("Tab","","layer","長押し BT")],[45,K("⇧ Shift","","mod")],
@@ -177,7 +177,7 @@ function base() {
 function over(pairs, held) {
   const a = Array(66).fill(null).map(() => K("", "", "trans"));
   pairs.forEach(([i, k]) => (a[i] = k));
-  [4,5,9,10,31,52,54].forEach(i => { if (a[i].c === "trans") a[i] = NONE; });
+  [4,5,9,10,30,52,54].forEach(i => { if (a[i].c === "trans") a[i] = NONE; });
   [held].flat().forEach(h => (a[h] = { ...a[h], c: "trans held", m: "", s: "", h: "押さえる" }));
   return a;
 }
@@ -232,13 +232,13 @@ function board(L) {
   const svg = el("svg", { viewBox: "-10 -10 1670 625", role: "img", "aria-label": `Layer ${L.n} ${L.name} の配置` });
   svg.append(el("text", { x: 300, y: 600, class: "side" }, "左手"), el("text", { x: 1350, y: 600, class: "side" }, "右手"));
   L.keys.forEach((k, i) => { if (i !== DIAL && !BALL.includes(i) && k) svg.append(keyGroup(i, k)); });
-  // dial (position 30)
+  // dial (position 31)
   const [dx, dy] = P[DIAL];
   const dg = el("g");
   dg.append(el("circle", { cx: dx + 50, cy: dy + 50, r: 46, class: "dial-ring" }), el("circle", { cx: dx + 50, cy: dy + 50, r: 38, class: "dial-knob" }));
   dg.append(el("text", { x: dx + 50, y: dy + 38, "font-size": fit(L.dial[0], 16, 70), "font-weight": 700 }, L.dial[0]));
   dg.append(el("text", { x: dx + 50, y: dy + 64, class: "sub", "font-size": fit("押: " + L.dial[1], 12, 66) }, "押: " + L.dial[1]));
-  dg.append(el("text", { x: dx + 102, y: dy + 40, class: "pos" }, "30"), el("text", { x: dx + 102, y: dy + 58, class: "pos" }, "押 66"));
+  dg.append(el("text", { x: dx - 2, y: dy + 40, class: "pos", style: "text-anchor: end" }, "31"), el("text", { x: dx - 2, y: dy + 58, class: "pos", style: "text-anchor: end" }, "押 66"));
   dg.append(el("title", {}, `ダイヤル 回転: ${L.dial[0]} / 押し込み: ${L.dial[1]}`));
   svg.append(dg);
   // trackball (replaces 61, 62)
