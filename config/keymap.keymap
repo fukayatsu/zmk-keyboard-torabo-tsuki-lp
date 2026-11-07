@@ -54,7 +54,7 @@
             bindings = <
 &kp ESC    &kp LC(N1)         &kp LC(N2)  &kp F3   &none      &none                                                                    &kp BSPC  &kp F7  &kp F12    &none         &none                     &kp EQUAL
 &kp GRAVE  &kp Q              &kp W       &kp E    &kp R      &kp T                                                                    &kp Y     &kp U   &kp I      &kp O         &kp P                     &kp MINUS
-&kp LCTRL  &kp A              &kp S       &kp D    &kp F      &kp G      &none                                &none                    &kp H     &kp J   &kp K      &kp L         &kp SEMI                  &kp SQT
+&kp LCTRL  &kp A              &kp S       &kp D    &kp F      &kp G      &mkp LCLK                            &none                    &kp H     &kp J   &kp K      &kp L         &kp SEMI                  &kp SQT
 &kp LSHFT  &kp Z              &kp X       &kp C    &kp V      &kp B      &lt 4 TAB                            &kp RSHFT                &kp N     &kp M   &kp COMMA  &kp DOT       &kp FSLH                  &kp BSLH
 &none      &kp LALT           &none       &mo 3     &mo 2     &kp LGUI   &kp SPACE    &lt 3 RET  &lt 2 RGUI   &none     &none          &kp RGUI  &mkp RCLK &mkp LCLK
 #if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
