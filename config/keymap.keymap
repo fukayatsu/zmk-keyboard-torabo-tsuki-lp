@@ -28,6 +28,18 @@
 #endif
 
 / {
+    behaviors {
+        // タップで LANG (英数/かな)、長押し or 他キーと同時押しで ⌘
+        //   Mac は LANG1=かな / LANG2=英数 をそのまま解釈、Android (Gboard) でも IME 切替になる
+        cmd_lang: cmd_lang {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "hold-preferred";
+            tapping-term-ms = <200>;
+            bindings = <&kp>, <&kp>;
+        };
+    };
+
     macros {
         // ⌘ + 左クリック (押している間 ⌘ と左ボタンを押しっぱなし)
         cmd_click: cmd_click {
@@ -56,7 +68,7 @@
 &kp GRAVE  &kp Q              &kp W       &kp E    &kp R      &kp T                                                                    &kp Y     &kp U   &kp I      &kp O         &kp P                     &kp MINUS
 &kp LCTRL  &kp A              &kp S       &kp D    &kp F      &kp G      &mkp LCLK                            &none                    &kp H     &kp J   &kp K      &kp L         &kp SEMI                  &kp SQT
 &kp LSHFT  &kp Z              &kp X       &kp C    &kp V      &kp B      &lt 4 TAB                            &kp RSHFT                &kp N     &kp M   &kp COMMA  &kp DOT       &kp FSLH                  &kp BSLH
-&none      &kp LALT           &none       &mo 3     &mo 2     &kp LGUI   &kp SPACE    &lt 3 RET  &lt 2 RGUI   &none     &none          &kp RGUI  &mkp RCLK &mkp LCLK
+&none      &kp LALT           &none       &mo 3     &mo 2     &cmd_lang LGUI LANG2   &kp SPACE    &lt 3 RET  &lt 2 LANG1   &none     &none          &cmd_lang RGUI LANG1  &mkp RCLK &mkp LCLK
 #if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
 &tog 1
 #endif

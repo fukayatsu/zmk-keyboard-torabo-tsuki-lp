@@ -120,7 +120,7 @@
 <div class="wrap">
   <header>
     <h1>torabo-tsuki LP (L) キーマップ</h1>
-    <p class="meta version">バージョン: <time datetime="2026-11-07T15:56">2026-11-07 15:56</time></p>
+    <p class="meta version">バージョン: <time datetime="2026-11-08T12:08">2026-11-08 12:08</time></p>
     <p class="meta">右にトラックボールと高分解能ダイヤル(BMP Boost Extender Mini 経由)。Keyball61-Dual の配置を移したもの。キーの位置は実機の配置どおりです。記号は ⌃ Ctrl / ⇧ Shift / ⌥ Alt(Option) / ⌘ Win(Command)。</p>
     <div class="legend" aria-label="凡例">
       <span><i class="sw mod"></i>修飾キー・ショートカット</span>
@@ -135,7 +135,8 @@
   <footer>
     <p>ダイヤルを押すと縦スクロールと横スクロールが切り替わります(Layer 1 HScroll のオン・オフ)。横のときもキーは Base と同じです。</p>
     <p>空欄のキーは下のレイヤー(Base)と同じ動作です。Keyball61 のマクロ位置は未割当です。</p>
-    <p>左 ⌘ を単独で押すと英数、右 ⌘ を単独で押すとかなになるのは Mac の Karabiner-Elements の設定によるもので、キーボード側の設定ではありません。 Nav の「- [ ]」も同様で、キーボードは F20 を送り、Karabiner が入力します(かなモード中は英数にして入力し、かなに戻します)。</p>
+    <p>英数・かなキーはタップで LANG2(英数)・LANG1(かな)を送ります。Mac でも Android(Gboard)でも IME の切り替えになります。英数・右下のかなは長押しや他のキーとの同時押しで ⌘ になります。</p>
+    <p>Nav の「- [ ]」は Mac の Karabiner-Elements の設定によるものです。キーボードは F20 を送り、Karabiner が入力します(かなモード中は英数にして入力し、かなに戻します)。</p>
     <p>設定ファイル: <code>fukayatsu/zmk-keyboard-torabo-tsuki-lp</code> の <code>config/keymap.keymap</code>(ダイヤルのスクロール速度は <code>48 1</code>)。</p>
   </footer>
 </div>
@@ -169,8 +170,8 @@ function base() {
    [44,K("Tab","","layer","長押し BT")],[45,K("⇧ Shift","","mod")],
    [46,K("N")],[47,K("M")],[48,K(",","<")],[49,K(".",">")],[50,K("/","?")],[51,K("\\","|")],
    [52,NONE],[53,K("⌥ Alt","","mod")],[54,NONE],[55,K("Nav","","layer","押す間")],[56,K("Num","","layer","押す間")],
-   [57,K("⌘","単独で英数","mod")],[58,K("Space")],[59,K("Enter","","layer","長押し Nav")],[60,K("⌘","単独でかな","layer","長押し Num")],
-   [63,K("⌘","単独でかな","mod")],[64,K("右クリック","","mouse")],[65,K("左クリック","","mouse")]
+   [57,K("英数","","mod","長押し ⌘")],[58,K("Space")],[59,K("Enter","","layer","長押し Nav")],[60,K("かな","","layer","長押し Num")],
+   [63,K("かな","","mod","長押し ⌘")],[64,K("右クリック","","mouse")],[65,K("左クリック","","mouse")]
   ].forEach(([i, k]) => set(i, k));
   return a;
 }
@@ -185,7 +186,7 @@ function over(pairs, held) {
 const layers = [
   { n: 0, name: "Base", how: "通常時", keys: base(), held: null,
     dial: ["縦スクロール", "縦横切替"] },
-  { n: 2, name: "Num", how: "右親指の「⌘」を長押し / 左親指の「Num」を押す", held: [60, 56],
+  { n: 2, name: "Num", how: "右親指の「かな」を長押し / 左親指の「Num」を押す", held: [60, 56],
     keys: over([[13,K("!")],[14,K("@")],[15,K("#")],[16,K("$")],[17,K("%")],
       [18,K("^")],[19,K("&")],[20,K("*")],[21,K("(")],[22,K(")")],
       [25,K("1")],[26,K("2")],[27,K("3")],[28,K("4")],[29,K("5")],
