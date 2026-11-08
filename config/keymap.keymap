@@ -101,9 +101,31 @@
             bindings = <&kp D>, <&kp DEL>;
             mods = <(MOD_LCTL)>;
         };
+        em_k: em_k {  // Ctrl+K → 行末まで削除 (下の em_kill_line マクロ)
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp K>, <&em_kill_line>;
+            mods = <(MOD_LCTL)>;
+        };
     };
 
     macros {
+        // Android 用 Ctrl+K: Shift+End で行末まで選択 → Delete
+        //   行末で押した場合は選択が空なので Delete で次の行と結合される (Emacs と同じ)
+        //   mod-morph の Ctrl マスクは K を離すと解除されるため、離す前に送り終わるよう間隔を短くしている
+        em_kill_line: em_kill_line {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            wait-ms = <5>;
+            tap-ms = <5>;
+            bindings
+                = <&macro_press &kp LSHFT>
+                , <&macro_tap &kp END>
+                , <&macro_release &kp LSHFT>
+                , <&macro_tap &kp DEL>
+                ;
+        };
+
         // ⌘ + 左クリック (押している間 ⌘ と左ボタンを押しっぱなし)
         cmd_click: cmd_click {
             compatible = "zmk,behavior-macro";
@@ -157,7 +179,7 @@
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans                                                  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &em_e  &trans  &trans  &trans  &trans  &trans  &trans  &em_p  &trans
-&trans  &em_a  &trans  &em_d  &em_f  &trans  &trans  &trans  &em_h  &trans  &trans  &trans  &trans  &trans
+&trans  &em_a  &trans  &em_d  &em_f  &trans  &trans  &trans  &em_h  &trans  &em_k  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &em_b  &trans  &trans  &em_n  &trans  &trans  &trans  &trans  &trans
 &kp LGUI  &trans  &trans  &trans  &trans  &cmd_lang RCTRL LANG2  &trans         &trans  &trans  &trans           &trans  &trans  &trans  &trans
 #if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
