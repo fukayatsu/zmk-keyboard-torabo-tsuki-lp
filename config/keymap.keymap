@@ -171,7 +171,8 @@
 
         // Layer 1: Android モード (BT1 に切り替えると自動で ON、他の接続先で OFF: src/android_mode.c)
         //   BT レイヤーの 34 で手動トグルも可
-        //   52 = ⌘、57 = タップで英数 / 長押しで Ctrl (Mac の ⌘ の代わり)、32 = H (Ctrl+H で Backspace)。他は &trans
+        //   52 = ⌘、57 = タップで英数 / 長押しで右 Ctrl (Mac の ⌘ の代わり)
+        //   A/E/F/B/P/N/H/D/K = 左 Ctrl (24) と同時押しで Emacs 風 (行頭/行末/矢印/Backspace/Delete/行末まで削除)。他は &trans
         //   ダイヤルの割り当ては持たない (下のレイヤーのものが使われる)
         //   ダイヤルのスクロールだけ、下の input-listener の上書きで速く・逆向きにする
         android {
