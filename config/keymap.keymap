@@ -58,6 +58,15 @@
         };
     };
 
+    // Nav (3) と Android モード (5) が両方有効なときだけ Layer 6 を有効にする
+    conditional_layers {
+        compatible = "zmk,conditional-layers";
+        nav_android {
+            if-layers = <3 5>;
+            then-layer = <6>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
@@ -152,6 +161,22 @@
 &trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans         &trans  &trans  &trans           &trans  &trans  &trans  &trans
+#if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
+&trans
+#endif
+            >;
+        };
+
+        // Layer 6: Nav + Android モードのとき自動で有効 (下の conditional_layers)
+        //   Mac 用の ⌘[ / ⌘] の代わりに、Android の戻る / 進む (Consumer AC Back / Forward) を送る
+        nav_android {
+            display-name = "NavAndroid";
+            bindings = <
+&trans  &trans  &trans  &trans  &trans  &trans                                                  &trans          &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans                                                  &kp C_AC_BACK   &trans  &trans  &kp C_AC_FORWARD  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &trans          &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &trans          &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans         &trans  &trans  &trans           &trans          &trans  &trans  &trans
 #if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
 &trans
 #endif
