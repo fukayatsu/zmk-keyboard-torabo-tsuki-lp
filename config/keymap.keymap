@@ -95,6 +95,12 @@
             bindings = <&kp H>, <&kp BSPC>;
             mods = <(MOD_LCTL)>;
         };
+        em_d: em_d {  // Ctrl+D → Delete (カーソルの右を削除)
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp D>, <&kp DEL>;
+            mods = <(MOD_LCTL)>;
+        };
     };
 
     macros {
@@ -151,7 +157,7 @@
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans                                                  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &em_e  &trans  &trans  &trans  &trans  &trans  &trans  &em_p  &trans
-&trans  &em_a  &trans  &trans  &em_f  &trans  &trans  &trans  &em_h  &trans  &trans  &trans  &trans  &trans
+&trans  &em_a  &trans  &em_d  &em_f  &trans  &trans  &trans  &em_h  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &em_b  &trans  &trans  &em_n  &trans  &trans  &trans  &trans  &trans
 &kp LGUI  &trans  &trans  &trans  &trans  &cmd_lang RCTRL LANG2  &trans         &trans  &trans  &trans           &trans  &trans  &trans  &trans
 #if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
