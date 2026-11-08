@@ -51,12 +51,49 @@
             bindings = <&kp>, <&kp>;
         };
 
-        // Android 用: Ctrl+H で Backspace (Ctrl は外して送る)
-        ctrl_h_bspc: ctrl_h_bspc {
+        // Android 用 Emacs 風カーソル移動: 左 Ctrl (24) と同時押しのときだけ置き換える (Ctrl は外して送る)
+        //   57 の長押しは Android モードでは右 Ctrl なので、57 + A / F などは普通の Ctrl ショートカットになる
+        em_a: em_a {  // Ctrl+A → 行頭
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp A>, <&kp HOME>;
+            mods = <(MOD_LCTL)>;
+        };
+        em_e: em_e {  // Ctrl+E → 行末
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp E>, <&kp END>;
+            mods = <(MOD_LCTL)>;
+        };
+        em_f: em_f {  // Ctrl+F → →
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp F>, <&kp RIGHT>;
+            mods = <(MOD_LCTL)>;
+        };
+        em_b: em_b {  // Ctrl+B → ←
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp B>, <&kp LEFT>;
+            mods = <(MOD_LCTL)>;
+        };
+        em_p: em_p {  // Ctrl+P → ↑
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp P>, <&kp UP>;
+            mods = <(MOD_LCTL)>;
+        };
+        em_n: em_n {  // Ctrl+N → ↓
+            compatible = "zmk,behavior-mod-morph";
+            #binding-cells = <0>;
+            bindings = <&kp N>, <&kp DOWN>;
+            mods = <(MOD_LCTL)>;
+        };
+        em_h: em_h {  // Ctrl+H → Backspace
             compatible = "zmk,behavior-mod-morph";
             #binding-cells = <0>;
             bindings = <&kp H>, <&kp BSPC>;
-            mods = <(MOD_LCTL|MOD_RCTL)>;
+            mods = <(MOD_LCTL)>;
         };
     };
 
@@ -113,10 +150,10 @@
             display-name = "Android";
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans                                                  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans                                                  &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans  &trans  &ctrl_h_bspc  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &trans  &trans  &trans  &trans  &trans  &trans
-&kp LGUI  &trans  &trans  &trans  &trans  &cmd_lang LCTRL LANG2  &trans         &trans  &trans  &trans           &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &em_e  &trans  &trans  &trans  &trans  &trans  &trans  &em_p  &trans
+&trans  &em_a  &trans  &trans  &em_f  &trans  &trans  &trans  &em_h  &trans  &trans  &trans  &trans  &trans
+&trans  &trans  &trans  &trans  &trans  &em_b  &trans  &trans  &em_n  &trans  &trans  &trans  &trans  &trans
+&kp LGUI  &trans  &trans  &trans  &trans  &cmd_lang RCTRL LANG2  &trans         &trans  &trans  &trans           &trans  &trans  &trans  &trans
 #if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
 &trans
 #endif
