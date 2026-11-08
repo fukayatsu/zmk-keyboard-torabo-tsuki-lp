@@ -30,7 +30,7 @@
 
 / {
     behaviors {
-        // タップで LANG (英数/かな)、長押し or 他キーと同時押しで ⌘
+        // タップで LANG (英数/かな)、長押し or 他キーと同時押しで修飾キー (⌘、Android モードの 57 は Ctrl)
         //   Mac は LANG1=かな / LANG2=英数 をそのまま解釈、Android (Gboard) でも IME 切替になる
         cmd_lang: cmd_lang {
             compatible = "zmk,behavior-hold-tap";
@@ -151,7 +151,8 @@
 
         // Layer 5: Android モード (BT1 に切り替えると自動で ON、他の接続先で OFF: src/android_mode.c)
         //   BT レイヤーの 34 で手動トグルも可
-        //   キーは全て &trans、ダイヤルの割り当ても持たない (下のレイヤーのものが使われる)
+        //   52 = ⌘、57 = タップで英数 / 長押しで Ctrl (Mac の ⌘ の代わり)。他のキーは &trans
+        //   ダイヤルの割り当ては持たない (下のレイヤーのものが使われる)
         //   ダイヤルのスクロールだけ、下の input-listener の上書きで速く・逆向きにする
         android {
             display-name = "Android";
@@ -160,7 +161,7 @@
 &trans  &trans  &trans  &trans  &trans  &trans                                                  &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &trans  &trans  &trans  &trans  &trans  &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &trans  &trans  &trans  &trans  &trans  &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans         &trans  &trans  &trans           &trans  &trans  &trans  &trans
+&kp LGUI  &trans  &trans  &trans  &trans  &cmd_lang LCTRL LANG2  &trans         &trans  &trans  &trans           &trans  &trans  &trans  &trans
 #if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
 &trans
 #endif
