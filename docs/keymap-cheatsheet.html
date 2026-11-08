@@ -112,7 +112,7 @@
     .board svg { min-width: 0; width: 166mm; margin: 0 auto; }
     .lh h2 { font-size: 14px; }
     .dialnote, footer { font-size: 9.5px; }
-    #layer-4 { break-before: page; }
+    #layer-5 { break-before: page; }
   }
 </style>
 </head><body>
@@ -120,7 +120,7 @@
 <div class="wrap">
   <header>
     <h1>torabo-tsuki LP (L) キーマップ</h1>
-    <p class="meta version">バージョン: <time datetime="2026-11-08T13:03">2026-11-08 13:03</time></p>
+    <p class="meta version">バージョン: <time datetime="2026-11-08T13:12">2026-11-08 13:12</time></p>
     <p class="meta">右にトラックボールと高分解能ダイヤル(BMP Boost Extender Mini 経由)。Keyball61-Dual の配置を移したもの。キーの位置は実機の配置どおりです。記号は ⌃ Ctrl / ⇧ Shift / ⌥ Alt(Option) / ⌘ Win(Command)。</p>
     <div class="legend" aria-label="凡例">
       <span><i class="sw mod"></i>修飾キー・ショートカット</span>
@@ -133,8 +133,8 @@
   </header>
   <div id="layers"></div>
   <footer>
-    <p>ダイヤルを押すと縦スクロールと横スクロールが切り替わります(Layer 1 HScroll のオン・オフ)。横のときもキーは Base と同じです。</p>
-    <p>Android モード(Layer 5)は、BT 1 に切り替えると自動でオン、ほかの BT 番号や USB に切り替えるとオフになります(電源を入れたときも接続先で判定)。BT レイヤーの「Android」で手動でも切り替えられます。オンの間はダイヤルのスクロールが 6 倍速・逆向きになります(音量は変わりません)。キーの割り当ては次の3つが変わります。左親指の英数(57)は長押しで ⌘ ではなく Ctrl になります。左下(52)が ⌘ になります。Nav の戻る・進む(18・21)は ⌘[ ・⌘] ではなく Android の戻る・進むを送ります。</p>
+    <p>ダイヤルを押すと縦スクロールと横スクロールが切り替わります(Layer 2 HScroll のオン・オフ)。横のときもキーは Base と同じです。</p>
+    <p>Android モード(Layer 1)は、BT 1 に切り替えると自動でオン、ほかの BT 番号や USB に切り替えるとオフになります(電源を入れたときも接続先で判定)。BT レイヤーの「Android」で手動でも切り替えられます。オンの間はダイヤルのスクロールが 6 倍速・逆向きになります(音量は変わりません)。キーの割り当ては次の4つが変わります。左親指の英数(57)は長押しで ⌘ ではなく Ctrl になります。左下(52)が ⌘ になります。Nav の戻る・進む(18・21)は ⌘[ ・⌘] ではなく Android の戻る・進むを送ります。Ctrl+H で Backspace になります。</p>
     <p>空欄のキーは下のレイヤー(Base)と同じ動作です。Keyball61 のマクロ位置は未割当です。</p>
     <p>英数・かなキーはタップで LANG2(英数)・LANG1(かな)を送ります。Mac でも Android(Gboard)でも IME の切り替えになります。Android では、先に Gboard を日本語キーボードに切り替えておく必要があります(英語キーボードのままだと効きません)。英数・右下のかなは長押しや他のキーとの同時押しで ⌘ になります。</p>
     <p>Nav の「- [ ]」は Mac の Karabiner-Elements の設定によるものです。キーボードは F20 を送り、Karabiner が入力します(かなモード中は英数にして入力し、かなに戻します)。</p>
@@ -187,7 +187,7 @@ function over(pairs, held) {
 const layers = [
   { n: 0, name: "Base", how: "通常時", keys: base(), held: null,
     dial: ["縦スクロール", "縦横切替"] },
-  { n: 2, name: "Num", how: "右親指の「かな」を長押し / 左親指の「Num」を押す", held: [60, 56],
+  { n: 3, name: "Num", how: "右親指の「かな」を長押し / 左親指の「Num」を押す", held: [60, 56],
     keys: over([[13,K("!")],[14,K("@")],[15,K("#")],[16,K("$")],[17,K("%")],
       [18,K("^")],[19,K("&")],[20,K("*")],[21,K("(")],[22,K(")")],
       [25,K("1")],[26,K("2")],[27,K("3")],[28,K("4")],[29,K("5")],
@@ -195,13 +195,13 @@ const layers = [
       [39,K("0")],[40,K("9")],[41,K("8")],[42,K("7")],[43,K("6")],
       [44,K("Tab","⇧","mod")],[45,K("Space","⇧⌥","mod")],[51,K("↓","⇧⌥","mod")],[65,K("左クリック","⌘","mouse")]], [60, 56]),
     dial: ["横スクロール", "縦横切替"] },
-  { n: 3, name: "Nav", how: "右親指の「Enter」を長押し / 左親指の「Nav」を押す", held: [59, 55],
+  { n: 4, name: "Nav", how: "右親指の「Enter」を長押し / 左親指の「Nav」を押す", held: [59, 55],
     keys: over([[6,K("Del","⌃","mod")],[14,K("@")],[16,K("4","⇧⌘","mod")],[42,K("V","⇧⌘","mod")],
       [18,K("戻る","⌘[","mod")],[21,K("進む","⌘]","mod")],[22,K("P","⇧⌘","mod")],[23,K("- [ ] ","入力","mod")],
       [32,K("←")],[33,K("↓")],[34,K("↑")],[35,K("→")],[36,K("[","⇧⌘","mod")],[37,K("]","⇧⌘","mod")],
       [46,NONE],[47,NONE],[48,NONE],[49,NONE],[50,NONE]], [59, 55]),
     dial: ["音量 +/−", "縦横切替"] },
-  { n: 4, name: "BT", how: "左手内側の「Tab」を長押し", held: 44,
+  { n: 5, name: "BT", how: "左手内側の「Tab」を長押し", held: 44,
     keys: over([[18,K("BT 0","接続先","sys")],[19,K("BT 1","接続先","sys")],[20,K("BT 2","接続先","sys")],[21,K("BT 3","接続先","sys")],[22,K("BT 4","接続先","sys")],
       [32,K("USB","出力","sys")],[33,K("BLE","出力","sys")],[34,K("Android","モード切替","sys")],[35,K("Studio","ロック解除","sys")],[50,K("解除","今のBT","sys")]], 44),
     dial: ["Base と同じ", "縦横切替"] },

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 //
-// Android モード (config/keymap.keymap の Layer 5) を接続先に合わせて自動で ON/OFF する
+// Android モード (config/keymap.keymap の L_ANDROID = Layer 1) を接続先に合わせて自動で ON/OFF する
 //   - BLE プロファイル ANDROID_MODE_BLE_PROFILE (BT1) に切り替えたら ON
 //   - それ以外の BLE プロファイルや USB に切り替えたら OFF
 //   - 起動時は endpoint_changed が発生しないので、少し待ってから現在の接続先で判定する
@@ -21,7 +21,7 @@
 
 LOG_MODULE_REGISTER(android_mode, CONFIG_ZMK_LOG_LEVEL);
 
-#define ANDROID_MODE_LAYER 5
+#define ANDROID_MODE_LAYER 1  // config/keymap.keymap の L_ANDROID
 #define ANDROID_MODE_BLE_PROFILE 1
 #define ANDROID_MODE_BOOT_DELAY_MS 3000
 
