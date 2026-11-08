@@ -139,7 +139,8 @@
             >;
         };
 
-        // Layer 5: Android モード (BT レイヤーの 34 でトグル)
+        // Layer 5: Android モード (BT1 に切り替えると自動で ON、他の接続先で OFF: src/android_mode.c)
+        //   BT レイヤーの 34 で手動トグルも可
         //   キーは全て &trans、ダイヤルの割り当ても持たない (下のレイヤーのものが使われる)
         //   ダイヤルのスクロールだけ、下の input-listener の上書きで速く・逆向きにする
         android {
@@ -178,14 +179,14 @@
     sensor-bindings = <&hires_dial_encoder C_VOL_UP C_VOL_DN>;
 };
 
-// Android モード (Layer 5) 中はダイヤルのスクロールを 3 倍速・縦横とも逆向きにする
+// Android モード (Layer 5) 中はダイヤルのスクロールを 6 倍速・縦横とも逆向きにする
 //   (Mac はナチュラルスクロールで逆向き & 1段の移動量が大きいため)
 //   音量 (Nav) はキー入力なので影響しない
 / {
     hires_dial_scroll_listener {
         android {
             layers = <5>;
-            input-processors = <&zip_scroll_scaler 3 1>,
+            input-processors = <&zip_scroll_scaler 6 1>,
                                <&zip_scroll_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>;
         };
     };
@@ -193,7 +194,7 @@
     hires_dial_hscroll_listener {
         android {
             layers = <5>;
-            input-processors = <&zip_scroll_scaler 3 1>,
+            input-processors = <&zip_scroll_scaler 6 1>,
                                <&zip_scroll_transform (INPUT_TRANSFORM_X_INVERT | INPUT_TRANSFORM_Y_INVERT)>;
         };
     };
