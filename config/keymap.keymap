@@ -125,12 +125,13 @@
         };
 
         // Layer 4: (Keyball61 では空) 無線用に BT / 出力切替を右手側に配置 (左 Tab 長押し)
+        //   35 = ZMK Studio のロック解除 (Studio でキーマップを変更する前に押す)
         bt {
             display-name = "BT";
             bindings = <
 &trans  &trans  &trans  &trans  &trans  &trans                                                  &trans          &trans          &trans          &trans          &trans          &trans
 &trans  &trans  &trans  &trans  &trans  &trans                                                  &bt BT_SEL 0    &bt BT_SEL 1    &bt BT_SEL 2    &bt BT_SEL 3    &bt BT_SEL 4    &trans
-&trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &out OUT_USB    &out OUT_BLE    &tog 5          &trans          &trans          &trans
+&trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &out OUT_USB    &out OUT_BLE    &tog 5          &studio_unlock          &trans          &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans                         &trans           &trans          &trans          &trans          &trans          &bt BT_CLR      &trans
 &trans  &trans  &trans  &trans  &trans  &trans  &trans         &trans  &trans  &trans           &trans          &trans          &trans          &trans
 #if defined(TORABO_TSUKI_LP_INPUT_HIRES_DIAL)
