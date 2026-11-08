@@ -120,7 +120,7 @@
 <div class="wrap">
   <header>
     <h1>torabo-tsuki LP (L) キーマップ</h1>
-    <p class="meta version">バージョン: <time datetime="2026-11-08T12:18">2026-11-08 12:18</time></p>
+    <p class="meta version">バージョン: <time datetime="2026-11-08T12:24">2026-11-08 12:24</time></p>
     <p class="meta">右にトラックボールと高分解能ダイヤル(BMP Boost Extender Mini 経由)。Keyball61-Dual の配置を移したもの。キーの位置は実機の配置どおりです。記号は ⌃ Ctrl / ⇧ Shift / ⌥ Alt(Option) / ⌘ Win(Command)。</p>
     <div class="legend" aria-label="凡例">
       <span><i class="sw mod"></i>修飾キー・ショートカット</span>
@@ -134,6 +134,7 @@
   <div id="layers"></div>
   <footer>
     <p>ダイヤルを押すと縦スクロールと横スクロールが切り替わります(Layer 1 HScroll のオン・オフ)。横のときもキーは Base と同じです。</p>
+    <p>BT レイヤーの「Android」で Android モード(Layer 5)をオン・オフします。オンの間はダイヤルのスクロールが 3 倍速・逆向きになります(音量は変わりません)。キーの割り当ては変わりません。電源を入れ直すとオフ(Mac 用)に戻ります。</p>
     <p>空欄のキーは下のレイヤー(Base)と同じ動作です。Keyball61 のマクロ位置は未割当です。</p>
     <p>英数・かなキーはタップで LANG2(英数)・LANG1(かな)を送ります。Mac でも Android(Gboard)でも IME の切り替えになります。Android では、先に Gboard を日本語キーボードに切り替えておく必要があります(英語キーボードのままだと効きません)。英数・右下のかなは長押しや他のキーとの同時押しで ⌘ になります。</p>
     <p>Nav の「- [ ]」は Mac の Karabiner-Elements の設定によるものです。キーボードは F20 を送り、Karabiner が入力します(かなモード中は英数にして入力し、かなに戻します)。</p>
@@ -202,7 +203,7 @@ const layers = [
     dial: ["音量 +/−", "縦横切替"] },
   { n: 4, name: "BT", how: "左手内側の「Tab」を長押し", held: 44,
     keys: over([[18,K("BT 0","接続先","sys")],[19,K("BT 1","接続先","sys")],[20,K("BT 2","接続先","sys")],[21,K("BT 3","接続先","sys")],[22,K("BT 4","接続先","sys")],
-      [32,K("USB","出力","sys")],[33,K("BLE","出力","sys")],[50,K("解除","今のBT","sys")]], 44),
+      [32,K("USB","出力","sys")],[33,K("BLE","出力","sys")],[34,K("Android","モード切替","sys")],[50,K("解除","今のBT","sys")]], 44),
     dial: ["Base と同じ", "縦横切替"] },
 ];
 
