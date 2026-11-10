@@ -18,33 +18,35 @@ tent   = 0;    // テンティング角 [deg] (内側が上がる)
 pitch  = 0;    // 前後の傾斜 [deg] (奥が上がる)
 splay  = 8;    // ハの字 片側あたり [deg] (奥が近く手前が開く)
 
-br_t     = 4;     // ブリッジ・舌片の厚さ (= ポケットの深さ - clr)
 br_len   = 46;    // ブリッジ本体の先端 (内側辺からの距離)。先端は半径 br_r の半円
 br_y0    = -50;   // ブリッジ範囲 (ピボット基準 local y)
 br_y1    = -8;
 br_ext   = 12;    // 内側辺より先へ伸ばす量 (中心線 x=0 で左右がつながる)
-br_round = 3;     // 中央の継ぎ目の角の丸め半径
-br_ch    = 0.5;   // 上面の縁の面取り
+br_round_f = 80;  // 中央の継ぎ目 手前側 (出っ張った角) の丸め半径
+br_round_b = 80;  // 中央の継ぎ目 奥側 (へこんだ角) の丸め半径
 
 tab_w    = 2.0;   // フランジの張り出し
 tab_z0   = 1.4;   // フランジ下面 (付け根側) の高さ。下面は 45° で外へ向かって上がる
+tab_top  = tab_w; // フランジ上の垂直部の高さ (45° 部の高さ tab_w と同じ)
+// ブリッジ・舌片の厚さ (= ポケットの深さ - clr): 下の垂直部 + 45° 部 + 上の垂直部
+br_t     = tab_z0 + tab_w + tab_top;
 slide_len = 32;   // ブリッジの付け外しのスライド量 (約 30 mm で外れる)
 clr      = 0.15;  // ポケットのすきま (0.2 だと若干ゆるかった)
 
 mag_d    = 8.3;   // 磁石穴 (Ø8 + 公差)
 mag_t    = 2;     // 磁石の厚み
-mag_h    = mag_t + 0.1;  // 磁石穴の深さ (ブリッジ・舌片側)
+mag_h    = mag_t + 0.1;  // 磁石穴の深さ (ブリッジ・舌片・ウェッジ共通)
+mag_skin = 1.0;   // ウェッジの磁石穴の天井 (ケース底面側の肉厚)
 mag_pts  = [[-24, -29]];   // ブリッジ磁石: 左側 local [x,y] (右はx反転)。片側1個
 
-// ウェッジの厚さ: ポケット (br_t + clr) + 磁石。ウェッジ側の磁石穴は貫通させ、磁石の上面がケース底面に当たる
-wedge_t  = br_t + clr + mag_t;
+// ウェッジの厚さ: ポケット (br_t + clr) + 磁石穴 (くぼみ) + 天井
+wedge_t  = br_t + clr + mag_h + mag_skin;
 
 // パームレスト (サンワ TOK-MU2NBK2: W94 x D80 x H21, 角丸長方形)
 pr_w     = 94;
 pr_d     = 80;
 pr_r     = 8;     // 置き場の角の丸め (パームレストの角 R 以下にする)
 pr_clr   = 1.0;   // 置き場とパームレストのすきま (片側)
-pr_cx    = 92;    // 置き場の中心 (内側辺からの距離, local x)
 rim_w    = 2.4;   // 縁の幅
 rim_h    = 3;     // 縁の高さ (プレート上面から)
 plate_t  = 3;     // プレートの厚さ
@@ -67,6 +69,8 @@ HOLES_R = [[121.7,113.8],[121.7,56.8],[28.5,121.8],[-16.2,39.1]];
 W_CASE = 154;
 Y_FRONT = -107.6;  // ケース手前端 (親指部分, ピボット基準 local y)
 FE      = -98.2;   // 手前の直線辺 (local x 42〜151) の y
+
+pr_cx    = W_CASE - (pr_w / 2 + pr_clr + rim_w);  // 置き場の中心 (local x)。プレートの外側の辺をウェッジの外側の辺 (x = W_CASE) に揃える
 
 // 左右の並進 (gap.sh で奥側の最接近 ≈ 2.2 mm になるよう求めた値)
 x_off = 1.1;
@@ -118,29 +122,34 @@ module lrect(side, x0, x1, y0, y1)
 
 /* ---------- 全周フランジのスライドロック (ブリッジ・プレート共通) ---------- */
 
-// 全周フランジ付きの板: children = フランジ込みの外形 (2D)。下面は 45°、上の縁は br_ch 面取り
+// 全周フランジ付きの板: children = フランジ込みの外形 (2D)。断面は 垂直 tab_z0 → 45° (tab_w) → 垂直 tab_top
 module flanged() {
     linear_extrude(tab_z0) offset(r = -tab_w) children();
     minkowski() {
         translate([0, 0, tab_z0]) linear_extrude(0.01) offset(r = -tab_w) children();
         cylinder(h = tab_w, r1 = 0, r2 = tab_w, $fn = 32);
     }
-    translate([0, 0, tab_z0 + tab_w]) linear_extrude(br_t - br_ch - tab_z0 - tab_w) children();
-    translate([0, 0, br_t - br_ch]) linear_extrude(br_ch) offset(r = -br_ch) children();
+    translate([0, 0, tab_z0 + tab_w]) linear_extrude(tab_top) children();
 }
 
-// ウェッジ側のポケット + 溝: children = フランジを除いた本体の外形 (2D, 凸形)。
+// 2D 図形を v 方向へ掃引 (凹形でも可)
+module swept2d(v) minkowski() {
+    children();
+    hull() { square(0.01, center = true); translate(v) square(0.01, center = true); }
+}
+
+// ウェッジ側のポケット + 溝: children = フランジを除いた本体の外形 (2D, 凹形でも可)。
 // sweep 方向へ掃引して口を開ける (フランジの 45° 面を法線方向に clr オフセット)
 module dovetail_pocket(sweep) {
     dz = clr * sqrt(2);
     zr = tab_z0 - dz - 1;               // 付け根 (本体側へ 1 mm 入った所) の高さ
     zo = tab_z0 - dz + tab_w + clr;     // 張り出し端の高さ
-    translate([0, 0, -1]) linear_extrude(br_t + clr + 1)
-        hull() { offset(r = clr) children(); translate(sweep) offset(r = clr) children(); }
-    hull() for (v = [[0, 0], sweep]) translate(v) {
-        translate([0, 0, zr]) linear_extrude(0.01) offset(r = -1) children();
-        translate([0, 0, zo]) linear_extrude(br_t + 2 * clr - zo) offset(r = tab_w + clr) children();
+    translate([0, 0, -1]) linear_extrude(br_t + clr + 1) swept2d(sweep) offset(r = clr) children();
+    minkowski() {
+        translate([0, 0, zr]) linear_extrude(0.01) swept2d(sweep) offset(r = -1) children();
+        cylinder(h = zo - zr, r1 = 0, r2 = zo - zr, $fn = 32);
     }
+    translate([0, 0, zo]) linear_extrude(br_t + 2 * clr - zo) swept2d(sweep) offset(r = tab_w + clr) children();
 }
 
 /* ---------- ブリッジ ---------- */
@@ -152,13 +161,35 @@ module pill2d(ofs, x_from = -br_ext)
         translate([x_from, br_y0 - ofs]) square([br_xc - x_from, br_y1 - br_y0 + 2 * ofs]);
     }
 
-// 上から見た外形 (フランジ込み): 左右のピルを中心線 x=0 で切ってつなぎ、継ぎ目の角を丸める
-module bridge_outline()
-    offset(r = -br_round) offset(r = 2 * br_round) offset(r = -br_round)
+// 継ぎ目の角 (world, 中心線 x=0 上): R 側の local y = ly の直線が x=0 と交わる点
+function seam_pt(ly) = to_world2("R", [(ly * sin(splay) - x_off) / cos(splay), ly]);
+// 継ぎ目の角の丸め用: 角 c と、角の上側 (+y) に中心を置く半径 rr の円の間の三角形の残り
+module seam_corner(c, rr) {
+    t = rr * tan(splay);
+    difference() {
+        polygon([c, c + t * [cos(splay), sin(splay)], c + t * [-cos(splay), sin(splay)]]);
+        translate(c + [0, rr / cos(splay)]) circle(r = rr, $fn = 720);
+    }
+}
+
+// 上から見た外形 (フランジ込み): 左右のピルを中心線 x=0 で切ってつなぎ、
+// 手前の出っ張った角は削り、奥のへこんだ角は埋めて丸める
+module bridge_outline() {
+    difference() {
         for (side = ["L", "R"]) intersection() {
             local3(side) pill2d(tab_w);
             translate([side == "R" ? 0 : -500, -500]) square([500, 1000]);
         }
+        seam_corner(seam_pt(br_y0 - tab_w), br_round_f);
+    }
+    seam_corner(seam_pt(br_y1 + tab_w), br_round_b);
+}
+// 片側のウェッジに入る部分の本体 (フランジを除く, world)
+module bridge_body_half(side)
+    intersection() {
+        offset(r = -tab_w) bridge_outline();
+        translate([side == "R" ? 0 : -500, -500]) square([500, 1000]);
+    }
 
 module bridge() {
     difference() {
@@ -217,16 +248,16 @@ module wedge_world(side) {
             translate([0, 0, -skin - 1]) cylinder(d = screw_d, h = skin + 5);
             translate([0, 0, -80 - skin]) cylinder(d = head_d, h = 80);
         }
+        // ブリッジ用: 内側 (local -x) へ掃引
+        dovetail_pocket(rot2(s * splay, [-s * 200, 0])) bridge_body_half(side);
         local3(side) {
-            // ブリッジ用: 内側 (-x) へ掃引
-            dovetail_pocket([-200, 0]) pill2d(0, 0);
             // プレート用: 手前 (-y) へ掃引
             dovetail_pocket([0, -200]) tongue2d();
-            // 磁石穴 (貫通。磁石の上面がケース底面に当たる)
-            translate([tg_mag_p[0], tg_mag_p[1], br_t + clr - 0.01]) cylinder(d = mag_d, h = 20);
+            // 磁石穴 (ポケットの天井から上へくぼみ。ケース側は mag_skin 残す)
+            translate([tg_mag_p[0], tg_mag_p[1], br_t + clr - 0.01]) cylinder(d = mag_d, h = mag_h + 0.01);
         }
         for (m = mag_pts) let(w = to_world2(side, [-s * m[0], m[1]]))
-            translate([w[0], w[1], br_t + clr - 0.01]) cylinder(d = mag_d, h = 20);
+            translate([w[0], w[1], br_t + clr - 0.01]) cylinder(d = mag_d, h = mag_h + 0.01);
     }
 }
 
@@ -260,8 +291,8 @@ module rest_dummy() translate([0, 0, plate_t])
         offset(r = pr_r) square([pr_w - 2 * pr_r, pr_d - 2 * pr_r], center = true);
 module mags_wedge(sides = ["L", "R"]) for (side = sides) {
     for (m = mag_pts) let(s = sgn(side), w = to_world2(side, [-s * m[0], m[1]]))
-        translate([w[0], w[1], br_t + clr]) cylinder(d = 8, h = mag_t);
-    local3(side) translate([tg_mag_p[0], tg_mag_p[1], br_t + clr]) cylinder(d = 8, h = mag_t);
+        translate([w[0], w[1], br_t + clr + mag_h - mag_t]) cylinder(d = 8, h = mag_t);
+    local3(side) translate([tg_mag_p[0], tg_mag_p[1], br_t + clr + mag_h - mag_t]) cylinder(d = 8, h = mag_t);
 }
 module mags_bridge() for (side = ["L", "R"]) for (m = mag_pts) let(s = sgn(side), w = to_world2(side, [-s * m[0], m[1]]))
     translate([w[0], w[1], br_t - mag_t]) cylinder(d = 8, h = mag_t);
