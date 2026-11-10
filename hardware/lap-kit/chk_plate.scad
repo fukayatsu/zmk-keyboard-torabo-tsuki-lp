@@ -6,5 +6,5 @@ side = "R"; t = 0; lift = 0; rot = 0;
 intersection() {
     wedge_world(side);
     local3(side) translate([0, -t, lift])
-        translate([pr_cx, FE, 0]) rotate([-rot, 0, 0]) translate([-pr_cx, -FE, 0]) plate_local();
+        translate([tg_cx, FE, 0]) rotate([-rot, 0, 0]) translate([-tg_cx, -FE, 0]) plate_local();
 }

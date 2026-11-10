@@ -1,6 +1,6 @@
 // torabo-tsuki LP (L) simple-case lap kit
 //   - wedge (L/R): 公式シンプルケースの下に既存M2ネジ穴で共締めする一様な厚さの板 (ハの字に配置)
-//   - bridge: 2つのピル形 (先端半円) を中心でつないだブーメラン形。
+//   - bridge: 2つの角丸四角形 (先端の角 R6) を中心でつないだブーメラン形。
 //             全周の 45° フランジが、ウェッジ底面ポケットの溝に入るスライドロック (内側から差し込む)
 //   - plate (L/R): パームレスト置き場。全周フランジ付きの舌片をウェッジ手前のポケットに前から差し込む
 //   + Ø8x2 磁石 (ロック位置の保持・ガタ取り)
@@ -18,7 +18,8 @@ tent   = 0;    // テンティング角 [deg] (内側が上がる)
 pitch  = 0;    // 前後の傾斜 [deg] (奥が上がる)
 splay  = 8;    // ハの字 片側あたり [deg] (奥が近く手前が開く)
 
-br_len   = 46;    // ブリッジ本体の先端 (内側辺からの距離)。先端は半径 br_r の半円
+br_len   = 46;    // ブリッジ本体の先端 (内側辺からの距離)。先端は角丸の四角形 (角 R = br_rc)
+br_rc    = 6;     // ブリッジ先端の角 R (フランジを除く本体)
 br_y0    = -50;   // ブリッジ範囲 (ピボット基準 local y)
 br_y1    = -8;
 br_ext   = 12;    // 内側辺より先へ伸ばす量 (中心線 x=0 で左右がつながる)
@@ -30,31 +31,36 @@ tab_z0   = 1.4;   // フランジ下面 (付け根側) の高さ。下面は 45�
 tab_top  = tab_w; // フランジ上の垂直部の高さ (45° 部の高さ tab_w と同じ)
 // ブリッジ・舌片の厚さ (= ポケットの深さ - clr): 下の垂直部 + 45° 部 + 上の垂直部
 br_t     = tab_z0 + tab_w + tab_top;
-slide_len = 32;   // ブリッジの付け外しのスライド量 (約 30 mm で外れる)
+slide_len = 48;   // ブリッジの付け外しのスライド量 (約 46 mm で外れる)
 clr      = 0.15;  // ポケットのすきま (0.2 だと若干ゆるかった)
 
 mag_d    = 8.3;   // 磁石穴 (Ø8 + 公差)
 mag_t    = 2;     // 磁石の厚み
 mag_h    = mag_t + 0.1;  // 磁石穴の深さ (ブリッジ・舌片・ウェッジ共通)
 mag_skin = 1.0;   // ウェッジの磁石穴の天井 (ケース底面側の肉厚)
-mag_pts  = [[-24, -29]];   // ブリッジ磁石: 左側 local [x,y] (右はx反転)。片側1個
+mag_pts  = [[-24, -40], [-24, -18]];   // ブリッジ磁石: 左側 local [x,y] (右はx反転)。片側2個 (回転方向のがたつき防止)
 
 // ウェッジの厚さ: ポケット (br_t + clr) + 磁石穴 (くぼみ) + 天井
 wedge_t  = br_t + clr + mag_h + mag_skin;
 
-// パームレスト (サンワ TOK-MU2NBK2: W94 x D80 x H21, 角丸長方形)
-pr_w     = 94;
-pr_d     = 80;
-pr_r     = 8;     // 置き場の角の丸め (パームレストの角 R 以下にする)
+// パームレスト (W80 x D60 x H18, 角 R3 の角丸長方形)
+pr_w     = 80;
+pr_d     = 60;
+pr_h     = 18;
+pr_r     = 3;     // パームレストの角 R (置き場の角は pr_r + pr_clr)
+pr_rot   = 5;     // ウェッジに対する追加のハの字 [deg] (手前が外へ開く)
 pr_clr   = 1.0;   // 置き場とパームレストのすきま (片側)
 rim_w    = 2.4;   // 縁の幅
-rim_h    = 3;     // 縁の高さ (プレート上面から)
-plate_t  = 3;     // プレートの厚さ
+pr_depth = 1;     // パームレスト置き場の深さ (プレート上面から)
+plate_t  = br_t - pr_depth;  // 置き場の床の厚さ
 pl_gap   = 0.5;   // ウェッジ手前面とプレートのすきま
+pl_fillet = 10;   // 舌片と置き場の付け根の丸め半径
 tg_r     = 25;    // 舌片の先端半径 (幅 = 2 * tg_r)
-tg_len   = 32;    // 舌片がウェッジに入る長さ (手前面から)
-tg_mag   = 14;    // 舌片の磁石の位置 (手前面から)
-pl_slide = 36;    // プレートの付け外しのスライド量 (約 34 mm で外れる)
+tg_len   = 60;    // 舌片がウェッジに入る長さ (手前面から)
+tg_rc    = 6;     // 舌片先端の角 R (フランジを除く本体)
+tg_mag   = tg_len - 12;    // 舌片の磁石の位置 (手前面から)
+tg_mag_dx = 12;   // 舌片の磁石 2 個の中心からの横のずれ (回転方向のがたつき防止)
+pl_slide = tg_len + 4;     // プレートの付け外しのスライド量 (約 tg_len + 2 で外れる)
 
 screw_d   = 2.4;  // M2 通し穴
 head_d    = 4.6;  // なべ頭用ザグリ
@@ -70,7 +76,19 @@ W_CASE = 154;
 Y_FRONT = -107.6;  // ケース手前端 (親指部分, ピボット基準 local y)
 FE      = -98.2;   // 手前の直線辺 (local x 42〜151) の y
 
-pr_cx    = W_CASE - (pr_w / 2 + pr_clr + rim_w);  // 置き場の中心 (local x)。プレートの外側の辺をウェッジの外側の辺 (x = W_CASE) に揃える
+// 置き場の中心 (local)。x: 回転前のパームレストの外側の辺がウェッジの外側の辺 (x = W_CASE) から pr_out はみ出す位置
+pr_out   = 5;
+pr_cx    = W_CASE + pr_out - pr_w / 2;
+pr_cy    = FE - pl_gap - rim_w - 41 - 50;
+// 置き場の外周の半幅・半奥行・角 R
+pr_oa    = pr_w / 2 + pr_clr + rim_w;
+pr_ob    = pr_d / 2 + pr_clr + rim_w;
+pr_orc   = pr_r + pr_clr + rim_w;
+// 回転後の置き場の外周の最も内側 (-x) の x (内側奥の角 R の頂点) と、内側奥の角の y
+pr_in_x  = pr_cx - (pr_oa - pr_orc) * cos(pr_rot) - (pr_ob - pr_orc) * sin(pr_rot) - pr_orc;
+pr_tl_y  = pr_cy - pr_oa * sin(pr_rot) + pr_ob * cos(pr_rot);
+// 舌片の中心 (local x): 舌片の内側の辺 (フランジ込み) を置き場の内側の辺に揃える
+tg_cx    = pr_in_x + tg_r + tab_w;
 
 // 左右の並進 (gap.sh で奥側の最接近 ≈ 2.2 mm になるよう求めた値)
 x_off = 1.1;
@@ -79,9 +97,6 @@ z_lift = wedge_t + W_CASE * sin(tent) - Y_FRONT * sin(pitch);
 $fn = 48;
 
 // ブリッジのピル形 (local, R 向き)
-br_r  = (br_y1 - br_y0) / 2;
-br_yc = (br_y0 + br_y1) / 2;
-br_xc = br_len - br_r;
 
 function sgn(side) = side == "L" ? -1 : 1;
 // local(ピボット原点, ケース底面 z=0) -> world の 2D 写像 (z=0 平面上の点)
@@ -154,11 +169,11 @@ module dovetail_pocket(sweep) {
 
 /* ---------- ブリッジ ---------- */
 
-// ピル形 (local, R 向き): x_from から先端の半円まで。ofs で外側へ一様にオフセット
+// ブリッジ片側の形 (local, R 向き): x_from から角丸四角形の先端まで。ofs で外側へ一様にオフセット
 module pill2d(ofs, x_from = -br_ext)
     hull() {
-        translate([br_xc, br_yc]) circle(r = br_r + ofs, $fn = 120);
-        translate([x_from, br_y0 - ofs]) square([br_xc - x_from, br_y1 - br_y0 + 2 * ofs]);
+        for (y = [br_y0 + br_rc, br_y1 - br_rc]) translate([br_len - br_rc, y]) circle(r = br_rc + ofs, $fn = 64);
+        translate([x_from, br_y0 - ofs]) square([br_len - br_rc - x_from, br_y1 - br_y0 + 2 * ofs]);
     }
 
 // 継ぎ目の角 (world, 中心線 x=0 上): R 側の local y = ly の直線が x=0 と交わる点
@@ -204,31 +219,70 @@ module bridge_print() bridge();
 
 /* ---------- パームレスト用プレート (local, R 向き) ---------- */
 
-// 舌片の本体 (フランジを除く)。手前面 FE から tg_len 入る。手前側はプレートの中まで伸ばす
+// 舌片の本体 (フランジを除く)。手前面 FE から tg_len 入る。手前側は置き場の内側奥の角 (pr_tl_y) まで伸ばす
 module tongue2d() hull() {
-    translate([pr_cx, FE + tg_len - tg_r]) circle(r = tg_r, $fn = 120);
-    translate([pr_cx - tg_r, FE - pl_gap - 6]) square([2 * tg_r, tg_len - tg_r + pl_gap + 6]);
+    for (sx = [-1, 1]) translate([tg_cx + sx * (tg_r - tg_rc), FE + tg_len - tg_rc]) circle(r = tg_rc, $fn = 64);
+    translate([tg_cx - tg_r, pr_tl_y]) square([2 * tg_r, FE + tg_len - tg_rc - pr_tl_y]);
 }
-pr_in_y1 = FE - pl_gap - rim_w;                 // 置き場の内側の奥端
-pr_in_y0 = pr_in_y1 - (pr_d + 2 * pr_clr);      // 置き場の内側の手前端
-module rest_in2d()
-    translate([pr_cx, (pr_in_y0 + pr_in_y1) / 2])
-        offset(r = pr_r) square([pr_w + 2 * pr_clr - 2 * pr_r, pr_d + 2 * pr_clr - 2 * pr_r], center = true);
+module rest_place() translate([pr_cx, pr_cy]) rotate(pr_rot) children();
+module rest2d() rest_place() offset(r = pr_r) square([pr_w - 2 * pr_r, pr_d - 2 * pr_r], center = true);
+module rest_in2d() offset(r = pr_clr) rest2d();
 module rest_out2d() offset(r = rim_w) rest_in2d();
-tg_mag_p = [pr_cx, FE + tg_mag];
+
+tg_mag_ps = [for (sx = [-1, 1]) [tg_cx + sx * tg_mag_dx, FE + tg_mag]];
+// プレートを上から見た外形 (フランジ込み)。舌片と置き場の付け根のへこんだ角を pl_fillet で丸める
+// 内側 (-x) は舌片の辺から置き場の内側の辺へまっすぐつなぐ (hull)。
+// 外側のへこんだ角だけ pl_fillet で丸める (丸め処理は角のまわりだけに使い、他の辺は元の多角形のまま)
+module plate_base2d() union() {
+    offset(r = tab_w) tongue2d();
+    rest_out2d();
+    // 舌片の内側の辺の線 (x = tg_cx - tg_r - tab_w) より外へは出さない
+    intersection() {
+        hull() {
+            intersection() { offset(r = tab_w) tongue2d(); translate([-500, pr_tl_y]) square([500 + tg_cx, 500]); }
+            intersection() { rest_out2d(); translate([-500, -500]) square([500 + tg_cx, 1000]); }
+        }
+        translate([tg_cx - tg_r - tab_w, -500]) square([500, 1000]);
+    }
+}
+// 外側の付け根の角: 舌片の外側の辺 x = pr_fx と、置き場の奥の辺の交点付近
+pr_fx = tg_cx + tg_r + tab_w;
+pr_fy = pr_cy + ((pr_fx - pr_cx + pr_ob * sin(pr_rot)) / cos(pr_rot)) * sin(pr_rot) + pr_ob * cos(pr_rot);
+module plate_top2d() union() {
+    plate_base2d();
+    intersection() {
+        offset(r = -pl_fillet) offset(r = pl_fillet) plate_base2d();
+        translate([pr_fx - 1, pr_fy - 3]) square([2 * pl_fillet, 2 * pl_fillet]);
+    }
+}
+
+// 舌片のフランジ下の切り欠き (ウェッジに入る部分, y >= FE - pl_gap)
+module tongue_undercut() {
+    y0 = FE - pl_gap;
+    z1 = tab_z0 + tab_w;   // 45° 部の上端
+    intersection() {
+        // 外形の柱 (z < z1) から、フランジ断面を引く。舌片は凸形なので 45° 部は 2 枚の断面の hull で正確に作る
+        difference() {
+            translate([0, 0, -0.01]) linear_extrude(z1 + 0.01) offset(r = tab_w) tongue2d();
+            linear_extrude(tab_z0) tongue2d();
+            hull() {
+                translate([0, 0, tab_z0]) linear_extrude(0.001) tongue2d();
+                translate([0, 0, z1 - 0.001]) linear_extrude(0.1) offset(r = tab_w) tongue2d();
+            }
+        }
+        translate([-500, y0, -1]) cube([1000, 500, br_t + 2]);
+    }
+}
 
 module plate_local() {
     difference() {
-        union() {
-            linear_extrude(plate_t) rest_out2d();
-            linear_extrude(plate_t + rim_h) difference() { rest_out2d(); rest_in2d(); }
-            // 舌片は置き場の奥の縁から先だけ (置き場の中に盛り上がらないように)
-            intersection() {
-                flanged() offset(r = tab_w) tongue2d();
-                translate([pr_cx - 100, pr_in_y1, -1]) cube([200, 200, br_t + 2]);
-            }
-        }
-        translate([tg_mag_p[0], tg_mag_p[1], br_t - mag_h]) cylinder(d = mag_d, h = mag_h + 1);
+        // 上から見た外形の板 (高さ br_t)。付け根は丸める
+        linear_extrude(br_t) plate_top2d();
+        // ウェッジに入る部分だけフランジ断面にする。外は垂直な側面
+        tongue_undercut();
+        // 置き場: 床 plate_t を残して掘る
+        translate([0, 0, plate_t]) linear_extrude(br_t) rest_in2d();
+        for (m = tg_mag_ps) translate([m[0], m[1], br_t - mag_h]) cylinder(d = mag_d, h = mag_h + 1);
     }
 }
 
@@ -254,7 +308,7 @@ module wedge_world(side) {
             // プレート用: 手前 (-y) へ掃引
             dovetail_pocket([0, -200]) tongue2d();
             // 磁石穴 (ポケットの天井から上へくぼみ。ケース側は mag_skin 残す)
-            translate([tg_mag_p[0], tg_mag_p[1], br_t + clr - 0.01]) cylinder(d = mag_d, h = mag_h + 0.01);
+            for (m = tg_mag_ps) translate([m[0], m[1], br_t + clr - 0.01]) cylinder(d = mag_d, h = mag_h + 0.01);
         }
         for (m = mag_pts) let(w = to_world2(side, [-s * m[0], m[1]]))
             translate([w[0], w[1], br_t + clr - 0.01]) cylinder(d = mag_d, h = mag_h + 0.01);
@@ -286,17 +340,15 @@ module case_simple(side) {
         translate([0, 0, 1.5]) linear_extrude(10) offset(delta = -1.2) outline(side);
     }
 }
-module rest_dummy() translate([0, 0, plate_t])
-    linear_extrude(21) translate([pr_cx, (pr_in_y0 + pr_in_y1) / 2])
-        offset(r = pr_r) square([pr_w - 2 * pr_r, pr_d - 2 * pr_r], center = true);
+module rest_dummy() translate([0, 0, plate_t]) linear_extrude(pr_h) rest2d();
 module mags_wedge(sides = ["L", "R"]) for (side = sides) {
     for (m = mag_pts) let(s = sgn(side), w = to_world2(side, [-s * m[0], m[1]]))
         translate([w[0], w[1], br_t + clr + mag_h - mag_t]) cylinder(d = 8, h = mag_t);
-    local3(side) translate([tg_mag_p[0], tg_mag_p[1], br_t + clr + mag_h - mag_t]) cylinder(d = 8, h = mag_t);
+    local3(side) for (m = tg_mag_ps) translate([m[0], m[1], br_t + clr + mag_h - mag_t]) cylinder(d = 8, h = mag_t);
 }
 module mags_bridge() for (side = ["L", "R"]) for (m = mag_pts) let(s = sgn(side), w = to_world2(side, [-s * m[0], m[1]]))
     translate([w[0], w[1], br_t - mag_t]) cylinder(d = 8, h = mag_t);
-module mags_plate(side) local3(side) translate([tg_mag_p[0], tg_mag_p[1], br_t - mag_t]) cylinder(d = 8, h = mag_t);
+module mags_plate(side) local3(side) for (m = tg_mag_ps) translate([m[0], m[1], br_t - mag_t]) cylinder(d = 8, h = mag_t);
 
 if (part == "w_bridge") bridge();
 else if (part == "w_case_L") place("L") case_simple("L");
