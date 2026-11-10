@@ -1,11 +1,10 @@
 // torabo-tsuki LP (L) simple-case lap kit
 //   - wedge (L/R): 公式シンプルケースの下に既存M2ネジ穴で共締めする一様な厚さの板 (ハの字に配置)
-//   - bridge: 2つの角丸四角形 (先端の角 R6) を中心でつないだブーメラン形。
-//             全周の 45° フランジが、ウェッジ底面ポケットの溝に入るスライドロック (内側から差し込む)
+//   - hinge: スガツネ HG-TS03 (トルクヒンジ) 1 個で左右のウェッジの底を直接つなぐ。背中合わせにたたむ
 //   - plate (L/R): パームレスト置き場。全周フランジ付きの舌片をウェッジ手前のポケットに前から差し込む
 //   + Ø8x2 磁石 (ロック位置の保持・ガタ取り)
 //
-// part = "assembly" | "wedge_L" | "wedge_R" | "bridge" | "plate_L" | "plate_R" | "coupon_L" | "coupon_R"
+// part = "assembly" | "wedge_L" | "wedge_R" | "plate_L" | "plate_R" | "coupon_L" | "coupon_R"
 part = "assembly";
 
 // 公式リポジトリ (sekigon-gonnoc/torabo-tsuki-lp) を ./official に clone して使う
@@ -18,27 +17,33 @@ tent   = 0;    // テンティング角 [deg] (内側が上がる)
 pitch  = 0;    // 前後の傾斜 [deg] (奥が上がる)
 splay  = 8;    // ハの字 片側あたり [deg] (奥が近く手前が開く)
 
-br_len   = 46;    // ブリッジ本体の先端 (内側辺からの距離)。先端は角丸の四角形 (角 R = br_rc)
-br_rc    = 6;     // ブリッジ先端の角 R (フランジを除く本体)
-br_y0    = -50;   // ブリッジ範囲 (ピボット基準 local y)
-br_y1    = -8;
-br_ext   = 12;    // 内側辺より先へ伸ばす量 (中心線 x=0 で左右がつながる)
-br_round_f = 80;  // 中央の継ぎ目 手前側 (出っ張った角) の丸め半径
-br_round_b = 80;  // 中央の継ぎ目 奥側 (へこんだ角) の丸め半径
-
 tab_w    = 2.0;   // フランジの張り出し
 tab_z0   = 1.4;   // フランジ下面 (付け根側) の高さ。下面は 45° で外へ向かって上がる
 tab_top  = tab_w; // フランジ上の垂直部の高さ (45° 部の高さ tab_w と同じ)
-// ブリッジ・舌片の厚さ (= ポケットの深さ - clr): 下の垂直部 + 45° 部 + 上の垂直部
+// 舌片の厚さ (= ポケットの深さ - clr): 下の垂直部 + 45° 部 + 上の垂直部
 br_t     = tab_z0 + tab_w + tab_top;
-slide_len = 48;   // ブリッジの付け外しのスライド量 (約 46 mm で外れる)
+// ヒンジ: スガツネ HG-TS03 (トルク 0.35 N·m、フリーストップ) 1 個を、左右のウェッジの底に羽根を埋めてねじ止め。
+// 平らなとき羽根の取付面が上 (ウェッジ側)、軸筒は下に出る。軸は中心線上、取付面から hn_off 下 (底面より下)
+// なので、背中合わせにたたむ間ずっと左右の半身は中心線の自分の側にいる (ぶつからない)。
+// 寸法: 軸筒 Ø7.5・取付面から軸 4.25・M4 穴 Ø4.3 はメーカー図から。全長・幅・穴ピッチ・板厚は製品写真から推定 (要実測)
+hn_len   = 30;    // 全長 (軸方向)
+hn_w     = 17;    // 軸の中心から羽根の端まで (開いた幅の半分)
+hn_t     = 1.2;   // 羽根の板厚 (推定)
+hn_d     = 7.5;   // 軸筒の直径
+hn_off   = 4.25;  // 羽根の取付面から軸の中心まで
+hn_holes = [[10, -9], [10, 9]];   // 片側の羽根の穴 [軸からの距離, 丁番の中心からの y] (推定)
+hn_hole  = 4.3;
+hn_yc    = -18;   // 丁番の中心 (world y)。左右のすきまが小さい奥寄り
+hn_pilot = 3.4;   // M4 タッピングネジ (なべ) の下穴 (PLA)
+hn_screw = 6;     // ネジの長さ
+hn_clr   = 0.3;   // 羽根・軸筒のまわりのすきま
+hn_za    = hn_t - hn_off;  // 軸の高さ (底面 z=0 より下)
 clr      = 0.15;  // ポケットのすきま (0.2 だと若干ゆるかった)
 
 mag_d    = 8.3;   // 磁石穴 (Ø8 + 公差)
 mag_t    = 2;     // 磁石の厚み
-mag_h    = mag_t + 0.1;  // 磁石穴の深さ (ブリッジ・舌片・ウェッジ共通)
+mag_h    = mag_t + 0.1;  // 磁石穴の深さ (舌片・ウェッジ共通)
 mag_skin = 1.0;   // ウェッジの磁石穴の天井 (ケース底面側の肉厚)
-mag_pts  = [[-24, -40], [-24, -18]];   // ブリッジ磁石: 左側 local [x,y] (右はx反転)。片側2個 (回転方向のがたつき防止)
 
 // ウェッジの厚さ: ポケット (br_t + clr) + 磁石穴 (くぼみ) + 天井
 wedge_t  = br_t + clr + mag_h + mag_skin;
@@ -96,8 +101,6 @@ x_off = 1.1;
 z_lift = wedge_t + W_CASE * sin(tent) - Y_FRONT * sin(pitch);
 $fn = 48;
 
-// ブリッジのピル形 (local, R 向き)
-
 function sgn(side) = side == "L" ? -1 : 1;
 // local(ピボット原点, ケース底面 z=0) -> world の 2D 写像 (z=0 平面上の点)
 function rot2(a, p) = [p[0]*cos(a) - p[1]*sin(a), p[0]*sin(a) + p[1]*cos(a)];
@@ -135,7 +138,7 @@ module outline(side) {
 module lrect(side, x0, x1, y0, y1)
     polygon([for (p = [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]) to_world2(side, p)]);
 
-/* ---------- 全周フランジのスライドロック (ブリッジ・プレート共通) ---------- */
+/* ---------- 全周フランジのスライドロック (プレート) ---------- */
 
 // 全周フランジ付きの板: children = フランジ込みの外形 (2D)。断面は 垂直 tab_z0 → 45° (tab_w) → 垂直 tab_top
 module flanged() {
@@ -167,55 +170,35 @@ module dovetail_pocket(sweep) {
     translate([0, 0, zo]) linear_extrude(br_t + 2 * clr - zo) swept2d(sweep) offset(r = tab_w + clr) children();
 }
 
-/* ---------- ブリッジ ---------- */
+/* ---------- ヒンジ (スガツネ HG-TS03) ---------- */
 
-// ブリッジ片側の形 (local, R 向き): x_from から角丸四角形の先端まで。ofs で外側へ一様にオフセット
-module pill2d(ofs, x_from = -br_ext)
-    hull() {
-        for (y = [br_y0 + br_rc, br_y1 - br_rc]) translate([br_len - br_rc, y]) circle(r = br_rc + ofs, $fn = 64);
-        translate([x_from, br_y0 - ofs]) square([br_len - br_rc - x_from, br_y1 - br_y0 + 2 * ofs]);
-    }
-
-// 継ぎ目の角 (world, 中心線 x=0 上): R 側の local y = ly の直線が x=0 と交わる点
-function seam_pt(ly) = to_world2("R", [(ly * sin(splay) - x_off) / cos(splay), ly]);
-// 継ぎ目の角の丸め用: 角 c と、角の上側 (+y) に中心を置く半径 rr の円の間の三角形の残り
-module seam_corner(c, rr) {
-    t = rr * tan(splay);
-    difference() {
-        polygon([c, c + t * [cos(splay), sin(splay)], c + t * [-cos(splay), sin(splay)]]);
-        translate(c + [0, rr / cos(splay)]) circle(r = rr, $fn = 720);
-    }
+module ycyl(x, z, y0, y1, d) translate([x, y1, z]) rotate([90, 0, 0]) cylinder(d = d, h = y1 - y0, $fn = 48);
+// R 側のウェッジから除く部分 (world): 羽根の掘り込み (底面と面一)・軸筒の逃げ・下穴
+module hn_cut_R() {
+    y0 = hn_yc - hn_len / 2 - hn_clr; y1 = hn_yc + hn_len / 2 + hn_clr;
+    translate([-1, y0, -1]) cube([hn_w + hn_clr + 1, y1 - y0, 1 + hn_t]);
+    ycyl(0, hn_za, y0, y1, hn_d + 2 * hn_clr);
+    for (h = hn_holes) translate([h[0], hn_yc + h[1], 0]) cylinder(d = hn_pilot, h = hn_screw + 0.5, $fn = 24);
 }
+module hn_cut(side) if (side == "R") hn_cut_R(); else mirror([1, 0, 0]) hn_cut_R();
 
-// 上から見た外形 (フランジ込み): 左右のピルを中心線 x=0 で切ってつなぎ、
-// 手前の出っ張った角は削り、奥のへこんだ角は埋めて丸める
-module bridge_outline() {
+// 丁番の形 (確認用)。羽根は side ごと (R 側に軸筒を含める)
+module hinge_leaf(side, barrel = true) let(sx = sgn(side), y0 = hn_yc - hn_len / 2) {
     difference() {
-        for (side = ["L", "R"]) intersection() {
-            local3(side) pill2d(tab_w);
-            translate([side == "R" ? 0 : -500, -500]) square([500, 1000]);
-        }
-        seam_corner(seam_pt(br_y0 - tab_w), br_round_f);
+        translate([sx > 0 ? 0 : -hn_w, y0, 0]) cube([hn_w, hn_len, hn_t]);
+        for (h = hn_holes) translate([sx * h[0], hn_yc + h[1], -1]) cylinder(d = hn_hole, h = 5, $fn = 16);
     }
-    seam_corner(seam_pt(br_y1 + tab_w), br_round_b);
+    // 羽根から軸筒へ下りる部分
+    translate([sx > 0 ? 0 : -hn_d / 2, y0, hn_za]) cube([hn_d / 2, hn_len, -hn_za]);
+    if (side == "R" && barrel) difference() {
+        ycyl(0, hn_za, y0 + 1.5, y0 + hn_len - 1.5, hn_d);
+        ycyl(0, hn_za, y0, y0 + hn_len, 2);
+    }
+    // M4 なべネジの頭 (目安)
+    for (h = hn_holes) translate([sx * h[0], hn_yc + h[1], -2.8]) cylinder(d = 7, h = 2.8, $fn = 24);
 }
-// 片側のウェッジに入る部分の本体 (フランジを除く, world)
-module bridge_body_half(side)
-    intersection() {
-        offset(r = -tab_w) bridge_outline();
-        translate([side == "R" ? 0 : -500, -500]) square([500, 1000]);
-    }
-
-module bridge() {
-    difference() {
-        flanged() bridge_outline();
-        for (side = ["L", "R"]) for (m = mag_pts) let(s = sgn(side), w = to_world2(side, [-s * m[0], m[1]]))
-            translate([w[0], w[1], br_t - mag_h]) cylinder(d = mag_d, h = mag_h + 1);
-    }
-}
-
-// 印刷用ブリッジ: 磁石穴を上にしてそのまま (フランジ下面は 45°)
-module bridge_print() bridge();
+// たたむ: 半身を軸 (中心線、z = hn_za) まわりに th 度回す (+ で外側が下がる = 背中合わせ)
+module fold(side, th) translate([0, 0, hn_za]) rotate([0, sgn(side) * th, 0]) translate([0, 0, -hn_za]) children();
 
 /* ---------- パームレスト用プレート (local, R 向き) ---------- */
 
@@ -302,26 +285,22 @@ module wedge_world(side) {
             translate([0, 0, -skin - 1]) cylinder(d = screw_d, h = skin + 5);
             translate([0, 0, -80 - skin]) cylinder(d = head_d, h = 80);
         }
-        // ブリッジ用: 内側 (local -x) へ掃引
-        dovetail_pocket(rot2(s * splay, [-s * 200, 0])) bridge_body_half(side);
+        hn_cut(side);
         local3(side) {
             // プレート用: 手前 (-y) へ掃引
             dovetail_pocket([0, -200]) tongue2d();
             // 磁石穴 (ポケットの天井から上へくぼみ。ケース側は mag_skin 残す)
             for (m = tg_mag_ps) translate([m[0], m[1], br_t + clr - 0.01]) cylinder(d = mag_d, h = mag_h + 0.01);
         }
-        for (m = mag_pts) let(w = to_world2(side, [-s * m[0], m[1]]))
-            translate([w[0], w[1], br_t + clr - 0.01]) cylinder(d = mag_d, h = mag_h + 0.01);
     }
 }
 
-// テスト片: ブリッジ用ポケットまわりだけ切り出し
+// テスト片: ヒンジの取付部だけ切り出し (掘り込み・下穴の確認)
 module coupon_world(side) {
     s = sgn(side);
     intersection() {
         wedge_world(side);
-        translate([0, 0, -1]) linear_extrude(100)
-            lrect(side, s * (br_len + 8), -s * 20, br_y0 - 10, br_y1 + 10);
+        translate([s > 0 ? 0 : -(hn_w + 8), hn_yc - hn_len / 2 - 6, -1]) cube([hn_w + 8, hn_len + 12, 100]);
     }
 }
 
@@ -342,15 +321,12 @@ module case_simple(side) {
 }
 module rest_dummy() translate([0, 0, plate_t]) linear_extrude(pr_h) rest2d();
 module mags_wedge(sides = ["L", "R"]) for (side = sides) {
-    for (m = mag_pts) let(s = sgn(side), w = to_world2(side, [-s * m[0], m[1]]))
-        translate([w[0], w[1], br_t + clr + mag_h - mag_t]) cylinder(d = 8, h = mag_t);
     local3(side) for (m = tg_mag_ps) translate([m[0], m[1], br_t + clr + mag_h - mag_t]) cylinder(d = 8, h = mag_t);
 }
-module mags_bridge() for (side = ["L", "R"]) for (m = mag_pts) let(s = sgn(side), w = to_world2(side, [-s * m[0], m[1]]))
-    translate([w[0], w[1], br_t - mag_t]) cylinder(d = 8, h = mag_t);
 module mags_plate(side) local3(side) for (m = tg_mag_ps) translate([m[0], m[1], br_t - mag_t]) cylinder(d = 8, h = mag_t);
 
-if (part == "w_bridge") bridge();
+if (part == "w_hinge_L") hinge_leaf("L");
+else if (part == "w_hinge_R") hinge_leaf("R");
 else if (part == "w_case_L") place("L") case_simple("L");
 else if (part == "w_case_R") place("R") case_simple("R");
 else if (part == "w_wedge_L") wedge_world("L");
@@ -361,7 +337,6 @@ else if (part == "w_rest_L") local3("L") rest_dummy();
 else if (part == "w_rest_R") local3("R") rest_dummy();
 else if (part == "w_mag_wedge_L") mags_wedge(["L"]);
 else if (part == "w_mag_wedge_R") mags_wedge(["R"]);
-else if (part == "w_mag_bridge") mags_bridge();
 else if (part == "w_mag_plate_L") mags_plate("L");
 else if (part == "w_mag_plate_R") mags_plate("R");
 else if (part == "projL") projection() world_side("L");
@@ -369,15 +344,13 @@ else if (part == "projR") projection() world_side("R");
 else if (part == "assembly") {
     color("dimgray") for (side = ["L", "R"]) place(side) case_stl(side);
     color("orange") for (side = ["L", "R"]) wedge_world(side);
-    color("deepskyblue") bridge();
+    color("silver") for (side = ["L", "R"]) hinge_leaf(side);
     color("mediumseagreen") for (side = ["L", "R"]) local3(side) plate_local();
     color("#333", 0.5) for (side = ["L", "R"]) local3(side) rest_dummy();
 } else if (part == "wedge_L") {
     print_pose("L") wedge_world("L");
 } else if (part == "wedge_R") {
     print_pose("R") wedge_world("R");
-} else if (part == "bridge") {
-    bridge_print();
 } else if (part == "plate_L") {
     mirror([1, 0, 0]) plate_local();
 } else if (part == "plate_R") {
