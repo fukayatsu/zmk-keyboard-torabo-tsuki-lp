@@ -13,9 +13,10 @@ import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 BUILD = HERE / "build"
-PRINT_PARTS = ["wedge_L", "wedge_R", "bridge", "coupon_L", "coupon_R"]
+PRINT_PARTS = ["wedge_L", "wedge_R", "bridge", "plate_L", "plate_R", "coupon_L", "coupon_R"]
 WORLD_PARTS = ["w_bridge", "w_case_L", "w_case_R", "w_wedge_L", "w_wedge_R",
-               "w_mag_wedge_L", "w_mag_wedge_R", "w_mag_bridge"]
+               "w_mag_wedge_L", "w_mag_wedge_R", "w_mag_bridge",
+               "w_plate_L", "w_plate_R", "w_rest_L", "w_rest_R", "w_mag_plate_L", "w_mag_plate_R"]
 
 
 def export(part: str, out: pathlib.Path) -> None:

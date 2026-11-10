@@ -13,6 +13,7 @@
   --line: #d3d8de;
   --accent: #c76a16;      /* PLA オレンジ = ウェッジ */
   --accent-2: #1689a8;    /* ブリッジ */
+  --accent-3: #2f8f5b;    /* プレート */
   --stage: #e3e7eb;
   --case: #3a4048;
   --chip: #e6e9ed;
@@ -22,13 +23,13 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #15191d; --panel: #1c2126; --fg: #e4e8ec; --muted: #9aa4ae; --line: #2e353c;
-    --accent: #e08a3a; --accent-2: #3fb3d3; --stage: #101418; --case: #59616b; --chip: #252b31;
+    --accent: #e08a3a; --accent-2: #3fb3d3; --accent-3: #4fbf84; --stage: #101418; --case: #59616b; --chip: #252b31;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #15191d; --panel: #1c2126; --fg: #e4e8ec; --muted: #9aa4ae; --line: #2e353c;
-  --accent: #e08a3a; --accent-2: #3fb3d3; --stage: #101418; --case: #59616b; --chip: #252b31;
+  --accent: #e08a3a; --accent-2: #3fb3d3; --accent-3: #4fbf84; --stage: #101418; --case: #59616b; --chip: #252b31;
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
@@ -85,7 +86,7 @@ tr:first-child td { border-top: 0; }
 
 <header>
   <h1>torabo-tsuki LP (L) ラップキット</h1>
-  <p>シンプルケース + 奥上がりウェッジ + スライドロック式ブリッジ</p>
+  <p>シンプルケース + 水平ウェッジ + スライドロック式ブリッジ + パームレスト用プレート</p>
 </header>
 
 <div class="wrap">
@@ -102,6 +103,8 @@ tr:first-child td { border-top: 0; }
       <span style="--c: var(--case)">ケース（簡略形状）</span>
       <span style="--c: var(--accent)">ウェッジ</span>
       <span style="--c: var(--accent-2)">ブリッジ</span>
+      <span style="--c: var(--accent-3)">プレート</span>
+      <span style="--c: #7d858e">パームレスト（目安）</span>
       <span style="--c: #b9c0c7">磁石 Ø8×2</span>
     </div>
   </div>
@@ -114,19 +117,28 @@ tr:first-child td { border-top: 0; }
         <button type="button" data-mode="wedge_L" aria-pressed="false">印刷: 左ウェッジ</button>
         <button type="button" data-mode="wedge_R" aria-pressed="false">印刷: 右ウェッジ</button>
         <button type="button" data-mode="bridge" aria-pressed="false">印刷: ブリッジ</button>
+        <button type="button" data-mode="plate_L" aria-pressed="false">印刷: 左プレート</button>
+        <button type="button" data-mode="plate_R" aria-pressed="false">印刷: 右プレート</button>
         <button type="button" data-mode="coupon_L" aria-pressed="false">テスト片: 左</button>
         <button type="button" data-mode="coupon_R" aria-pressed="false">テスト片: 右</button>
       </div>
       <div id="asm-ctl" style="display:flex;flex-direction:column;gap:10px">
         <div class="slider">
-          <span>ロック</span>
+          <span>右半身</span>
           <input type="range" id="sep" min="0" max="1" step="0.01" value="0" aria-label="右半身の付け外し">
+          <span>外す</span>
+        </div>
+        <div class="slider">
+          <span>プレート</span>
+          <input type="range" id="psep" min="0" max="1" step="0.01" value="0" aria-label="プレートの付け外し">
           <span>外す</span>
         </div>
         <div class="checks">
           <label><input type="checkbox" id="v-case" checked>ケース</label>
           <label><input type="checkbox" id="v-wedge" checked>ウェッジ</label>
           <label><input type="checkbox" id="v-bridge" checked>ブリッジ</label>
+          <label><input type="checkbox" id="v-plate" checked>プレート</label>
+          <label><input type="checkbox" id="v-rest" checked>パームレスト</label>
           <label><input type="checkbox" id="v-mag" checked>磁石</label>
         </div>
       </div>
@@ -136,15 +148,16 @@ tr:first-child td { border-top: 0; }
     <section class="card">
       <h2>形状パラメータ</h2>
       <dl>
-        <dt>前後の傾斜（奥が上）</dt><dd>5°（テンティングなし）</dd>
+        <dt>傾き</dt><dd>なし（水平）</dd>
         <dt>ハの字（片側）</dt><dd>8°</dd>
-        <dt>左右の最接近（奥側）</dt><dd>2.2 mm</dd>
-        <dt>ウェッジ厚 手前 → 奥</dt><dd>3.0 → 13.4 mm</dd>
-        <dt>ブリッジ</dt><dd>106.9 × 51.2 × 5 mm（ブーメラン形）</dd>
-        <dt>片側の形</dt><dd>幅 42 mm のピル形、先端は R21 の半円</dd>
-        <dt>爪（フランジ）</dt><dd>ブリッジの全周に連続（下面 45°）</dd>
-        <dt>爪の断面</dt><dd>張り出し 2.5 / 下面 45°</dd>
-        <dt>スライド量</dt><dd>32 mm（約 30 mm で外れる）</dd>
+        <dt>左右の最接近（奥側）</dt><dd>2.25 mm</dd>
+        <dt>ウェッジ厚</dt><dd>6.15 mm（一様）</dd>
+        <dt>ブリッジ</dt><dd>105.8 × 50.4 × 4 mm（ブーメラン形）</dd>
+        <dt>爪（フランジ）</dt><dd>全周に連続、張り出し 2.0 / 下面 45°</dd>
+        <dt>ブリッジのスライド</dt><dd>32 mm（約 30 mm で外れる）</dd>
+        <dt>プレート</dt><dd>100.8 × 121.3 mm、厚さ 3 / 縁の高さ 6 mm</dd>
+        <dt>パームレスト置き場</dt><dd>96 × 82 mm（94 × 80 に片側 1 mm）</dd>
+        <dt>プレートのスライド</dt><dd>36 mm（約 34 mm で外れる）</dd>
         <dt>ポケット・溝すきま</dt><dd>0.15 mm</dd>
       </dl>
     </section>
@@ -155,6 +168,7 @@ tr:first-child td { border-top: 0; }
         <li>ブリッジを左ウェッジに付ける：ブリッジの左端をポケットの内側の口に当て、爪をリップの下に合わせて約 32 mm 左へスライド。先端の半円が奥に突き当たり、磁石がカチッと合う位置で止まる。</li>
         <li>右半身を付ける：右半身をブリッジの右端に合わせて置き、約 32 mm 左へスライド。</li>
         <li>外すときは右半身を右へ約 32 mm 引き抜く。ブリッジは左に付けたままでよい。</li>
+        <li>プレート：舌片をウェッジ手前面の溝の口に合わせ、奥へ約 36 mm 差し込む。磁石がカチッと合う位置で止まる。外すときは手前へ引き抜く。</li>
       </ol>
       <p class="note">爪はブリッジの全周につながっていて、先端でもリップの下に潜る。片側だけ持っても、膝の上で真ん中が沈んでも、先端が浮いても継ぎ目が開かない。磁石はロック位置の保持とガタ取り用。</p>
     </section>
@@ -164,11 +178,12 @@ tr:first-child td { border-top: 0; }
       <table>
         <tr><td>ウェッジ（左・右）PLA</td><td class="n">各1</td></tr>
         <tr><td>ブリッジ PLA</td><td class="n">1</td></tr>
-        <tr><td>ネオジム磁石 Ø8×2</td><td class="n">4</td></tr>
+        <tr><td>プレート（左・右）PLA</td><td class="n">各1</td></tr>
+        <tr><td>ネオジム磁石 Ø8×2</td><td class="n">8</td></tr>
         <tr><td>M2×6 なべ小ねじ（元の M2×3.5 と交換）</td><td class="n">8</td></tr>
         <tr><td>滑り止めゴム足</td><td class="n">適量</td></tr>
       </table>
-      <p class="note"><b>極性</b>：ウェッジ側4個は同じ極を下向きに、ブリッジ側4個はその逆の極を上向きに入れる。</p>
+      <p class="note"><b>磁石</b>：ウェッジ側（4個）は貫通穴で、上面がケース底面に当たる。ブリッジ・プレート側（4個）と向き合う極が引き合うように入れる。</p>
       <p class="note"><b>ネジ</b>：ケースのネジ穴は底面側に Ø5×0.7 mm の座ぐりがあり、元のネジの頭はその中に沈んでいる。ウェッジ越しだと 1.5 + 0.7 mm 余分に要るので M2×6（元よりスペーサーへ 0.3 mm 深く入る）。</p>
     </section>
   </aside>
@@ -233,8 +248,15 @@ tr:first-child td { border-top: 0; }
     wedgeL: mesh('w_wedge_L', 'wedge'), wedgeR: mesh('w_wedge_R', 'wedge'),
     bridge: mesh('w_bridge', 'bridge'),
     magWL: mesh('w_mag_wedge_L', 'mag', true), magWR: mesh('w_mag_wedge_R', 'mag', true), magB: mesh('w_mag_bridge', 'mag', true),
+    plateL: mesh('w_plate_L', 'plate'), plateR: mesh('w_plate_R', 'plate'),
+    restL: mesh('w_rest_L', 'rest'), restR: mesh('w_rest_R', 'rest'),
+    magPL: mesh('w_mag_plate_L', 'mag', true), magPR: mesh('w_mag_plate_R', 'mag', true),
   };
   L.add(parts.caseL, parts.wedgeL); R.add(parts.caseR, parts.wedgeR); B.add(parts.bridge, parts.magB);
+  const PL = new THREE.Group(), PR = new THREE.Group();
+  PL.add(parts.plateL, parts.restL, parts.magPL); PR.add(parts.plateR, parts.restR, parts.magPR);
+  L.add(PL); R.add(PR);
+  mats.rest.transparent = true; mats.rest.opacity = 0.45; mats.rest.depthWrite = false;
   const magWL = parts.magWL, magWR = parts.magWR;
   L.add(magWL); R.add(magWR);
 
@@ -247,8 +269,8 @@ tr:first-child td { border-top: 0; }
   bedPlane.position.set(bedSize / 2, bedSize / 2, -0.05); bed.add(bedPlane);
   const grid = new THREE.GridHelper(bedSize, 11); grid.rotation.x = Math.PI / 2; grid.position.set(bedSize / 2, bedSize / 2, 0); bed.add(grid);
   const printMeshes = {};
-  for (const k of ['wedge_L', 'wedge_R', 'bridge', 'coupon_L', 'coupon_R']) {
-    const m = mesh(k, k === 'bridge' ? 'bridge' : 'wedge');
+  for (const k of ['wedge_L', 'wedge_R', 'bridge', 'plate_L', 'plate_R', 'coupon_L', 'coupon_R']) {
+    const m = mesh(k, k === 'bridge' ? 'bridge' : k.startsWith('plate') ? 'plate' : 'wedge');
     m.geometry.computeBoundingBox();
     const bb = m.geometry.boundingBox, c = new THREE.Vector3(); bb.getCenter(c);
     m.position.set(bedSize / 2 - c.x, bedSize / 2 - c.y, -bb.min.z);
@@ -262,6 +284,8 @@ tr:first-child td { border-top: 0; }
     mats.case.color.set(css('--case'));
     mats.wedge.color.set(css('--accent'));
     mats.bridge.color.set(css('--accent-2'));
+    mats.plate.color.set(css('--accent-3'));
+    mats.rest.color.set('#7d858e');
     mats.mag.color.set('#b9c0c7');
     edgeMat.color.set(css('--fg'));
     bedMat.color.set(css('--chip'));
@@ -275,8 +299,8 @@ tr:first-child td { border-top: 0; }
   // 視点
   const views = {
     asm: {
-      target: [0, -50, 8],
-      iso: [-170, -420, 260], front: [0, -520, 40], top: [0, -50, 560], bottom: [0, -50, -560],
+      target: [0, -85, 8],
+      iso: [-190, -520, 300], front: [0, -640, 50], top: [0, -85, 640], bottom: [0, -85, -640],
     },
     print: {
       target: [110, 110, 6],
@@ -304,6 +328,8 @@ tr:first-child td { border-top: 0; }
     wedge_L: 'ケースが当たる平らな面をベッド側に。ポケット・ザグリ・磁石穴は上向きでサポート不要。',
     wedge_R: 'ケースが当たる平らな面をベッド側に。ポケット・ザグリ・磁石穴は上向きでサポート不要。',
     bridge: '磁石穴を上にして平置き。爪の下面は 45° なのでサポート不要。',
+    plate_L: '底面をベッド側に。舌片の爪の下面は 45° なのでサポート不要。',
+    plate_R: '底面をベッド側に。舌片の爪の下面は 45° なのでサポート不要。',
     coupon_L: '左ウェッジのポケットまわりだけを切り出したもの。ブリッジと組んで、スライドの渋さ・爪のガタ・磁石の効きを確認する。',
     coupon_R: '右ウェッジのポケットまわりだけを切り出したもの。ブリッジと組んで、スライドの渋さ・爪のガタ・磁石の効きを確認する。',
   };
@@ -338,7 +364,19 @@ tr:first-child td { border-top: 0; }
   }
   sep.addEventListener('input', applySep);
 
-  const vis = { 'v-case': () => [parts.caseL, parts.caseR], 'v-wedge': () => [parts.wedgeL, parts.wedgeR], 'v-bridge': () => [parts.bridge], 'v-mag': () => [magWL, magWR, parts.magB] };
+  // プレートの付け外し: 前半で手前へ 36mm スライド、後半で持ち上げ
+  const psep = document.getElementById('psep');
+  function applyPSep() {
+    const t = parseFloat(psep.value);
+    const a = Math.min(1, t / 0.45), b = Math.max(0, (t - 0.5) / 0.5);
+    const ease = (x) => x * x * (3 - 2 * x);
+    const d = 36 * ease(a), sn = Math.sin(8 * deg), cs = Math.cos(8 * deg);
+    PR.position.set(sn * d, -cs * d, 25 * ease(b));
+    PL.position.set(-sn * d, -cs * d, 25 * ease(b));
+  }
+  psep.addEventListener('input', applyPSep);
+
+  const vis = { 'v-case': () => [parts.caseL, parts.caseR], 'v-wedge': () => [parts.wedgeL, parts.wedgeR], 'v-bridge': () => [parts.bridge], 'v-mag': () => [magWL, magWR, parts.magB, parts.magPL, parts.magPR], 'v-plate': () => [parts.plateL, parts.plateR], 'v-rest': () => [parts.restL, parts.restR] };
   for (const id in vis) document.getElementById(id).addEventListener('change', (e) => vis[id]().forEach((o) => (o.visible = e.target.checked)));
 
   function resize() {
