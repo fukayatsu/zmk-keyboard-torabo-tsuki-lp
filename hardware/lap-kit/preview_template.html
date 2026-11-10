@@ -1,0 +1,354 @@
+<title>torabo-tsuki ラップキット</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+JP:wght@400;500;700&display=swap">
+<style>
+/* layout: 左に大きな3Dビュー、右に操作と仕様の縦パネル（狭い画面では縦積み） */
+:root {
+  --bg: #eef0f2;
+  --panel: #f8f9fa;
+  --fg: #1d2329;
+  --muted: #5e6873;
+  --line: #d3d8de;
+  --accent: #c76a16;      /* PLA オレンジ = ウェッジ */
+  --accent-2: #1689a8;    /* ブリッジ */
+  --stage: #e3e7eb;
+  --case: #3a4048;
+  --chip: #e6e9ed;
+  --font-body: "IBM Plex Sans JP", "Hiragino Sans", "Noto Sans JP", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15191d; --panel: #1c2126; --fg: #e4e8ec; --muted: #9aa4ae; --line: #2e353c;
+    --accent: #e08a3a; --accent-2: #3fb3d3; --stage: #101418; --case: #59616b; --chip: #252b31;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15191d; --panel: #1c2126; --fg: #e4e8ec; --muted: #9aa4ae; --line: #2e353c;
+  --accent: #e08a3a; --accent-2: #3fb3d3; --stage: #101418; --case: #59616b; --chip: #252b31;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 14px; line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 16px;
+}
+header { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin-bottom: 12px; }
+h1 { font-size: 20px; margin: 0; font-weight: 700; text-wrap: balance; }
+header p { margin: 0; color: var(--muted); }
+.wrap { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 16px; align-items: start; }
+@media (max-width: 860px) { .wrap { grid-template-columns: minmax(0, 1fr); } }
+
+.stage { position: relative; background: var(--stage); border: 1px solid var(--line); border-radius: 8px; overflow: hidden; height: min(72vh, 640px); min-height: 360px; }
+.stage canvas { display: block; width: 100%; height: 100%; touch-action: none; }
+.hud { position: absolute; left: 12px; top: 12px; display: flex; flex-wrap: wrap; gap: 6px; max-width: calc(100% - 24px); }
+.hud button, .seg button {
+  font: inherit; font-size: 13px; color: var(--fg); background: var(--panel); border: 1px solid var(--line);
+  border-radius: 6px; padding: 4px 10px; cursor: pointer;
+}
+.hud button:hover, .seg button:hover { border-color: var(--muted); }
+button:focus-visible, input:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 2px; }
+.legend { position: absolute; right: 12px; bottom: 10px; display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; color: var(--muted); justify-content: flex-end; }
+.legend span::before { content: ""; display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; background: var(--c); }
+.hint { position: absolute; left: 12px; bottom: 10px; font-size: 12px; color: var(--muted); }
+@media (max-width: 520px) { .hint { display: none; } }
+
+aside { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+section.card { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+h2 { font-size: 12px; letter-spacing: .08em; color: var(--muted); margin: 0; font-weight: 500; }
+.seg { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg button[aria-pressed="true"] { background: var(--fg); color: var(--bg); border-color: var(--fg); }
+.slider { display: grid; grid-template-columns: auto 1fr auto; gap: 10px; align-items: center; font-size: 13px; color: var(--muted); }
+.slider input { width: 100%; accent-color: var(--accent); }
+.checks { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; }
+.checks label { display: flex; gap: 6px; align-items: center; cursor: pointer; }
+.checks input { accent-color: var(--accent); }
+dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 12px; font-size: 13px; }
+dt { color: var(--muted); }
+dd { margin: 0; font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+td { padding: 4px 0; border-top: 1px solid var(--line); vertical-align: top; }
+td.n { font-family: var(--font-mono); text-align: right; white-space: nowrap; padding-left: 8px; }
+tr:first-child td { border-top: 0; }
+.note { font-size: 12.5px; color: var(--muted); margin: 0; }
+.note b { color: var(--fg); font-weight: 500; }
+.steps { margin: 0; padding-left: 1.3em; display: flex; flex-direction: column; gap: 6px; font-size: 13px; }
+.print-info { font-family: var(--font-mono); font-size: 12.5px; color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<header>
+  <h1>torabo-tsuki LP (L) ラップキット</h1>
+  <p>シンプルケース + 奥上がりウェッジ + スライドロック式ブリッジ</p>
+</header>
+
+<div class="wrap">
+  <div class="stage" id="stage">
+    <canvas id="cv" aria-label="3D プレビュー"></canvas>
+    <div class="hud" id="views">
+      <button type="button" data-view="iso">斜め</button>
+      <button type="button" data-view="front">手前から</button>
+      <button type="button" data-view="top">上</button>
+      <button type="button" data-view="bottom">底面</button>
+    </div>
+    <div class="hint">ドラッグで回転 · ホイール/ピンチでズーム · 右ドラッグで移動</div>
+    <div class="legend" id="legend">
+      <span style="--c: var(--case)">ケース（簡略形状）</span>
+      <span style="--c: var(--accent)">ウェッジ</span>
+      <span style="--c: var(--accent-2)">ブリッジ</span>
+      <span style="--c: #b9c0c7">磁石 Ø8×2</span>
+    </div>
+  </div>
+
+  <aside>
+    <section class="card">
+      <h2>表示モード</h2>
+      <div class="seg" id="mode">
+        <button type="button" data-mode="asm" aria-pressed="true">組立</button>
+        <button type="button" data-mode="wedge_L" aria-pressed="false">印刷: 左ウェッジ</button>
+        <button type="button" data-mode="wedge_R" aria-pressed="false">印刷: 右ウェッジ</button>
+        <button type="button" data-mode="bridge" aria-pressed="false">印刷: ブリッジ</button>
+        <button type="button" data-mode="coupon_L" aria-pressed="false">テスト片: 左</button>
+        <button type="button" data-mode="coupon_R" aria-pressed="false">テスト片: 右</button>
+      </div>
+      <div id="asm-ctl" style="display:flex;flex-direction:column;gap:10px">
+        <div class="slider">
+          <span>ロック</span>
+          <input type="range" id="sep" min="0" max="1" step="0.01" value="0" aria-label="右半身の付け外し">
+          <span>外す</span>
+        </div>
+        <div class="checks">
+          <label><input type="checkbox" id="v-case" checked>ケース</label>
+          <label><input type="checkbox" id="v-wedge" checked>ウェッジ</label>
+          <label><input type="checkbox" id="v-bridge" checked>ブリッジ</label>
+          <label><input type="checkbox" id="v-mag" checked>磁石</label>
+        </div>
+      </div>
+      <div id="print-ctl" class="print-info" hidden></div>
+    </section>
+
+    <section class="card">
+      <h2>形状パラメータ</h2>
+      <dl>
+        <dt>前後の傾斜（奥が上）</dt><dd>5°（テンティングなし）</dd>
+        <dt>ハの字（片側）</dt><dd>8°</dd>
+        <dt>左右の最接近（奥側）</dt><dd>2.2 mm</dd>
+        <dt>ウェッジ厚 手前 → 奥</dt><dd>3.0 → 13.4 mm</dd>
+        <dt>ブリッジ</dt><dd>106.9 × 51.2 × 5 mm（ブーメラン形）</dd>
+        <dt>片側の形</dt><dd>幅 42 mm のピル形、先端は R21 の半円</dd>
+        <dt>爪（フランジ）</dt><dd>ブリッジの全周に連続（下面 45°）</dd>
+        <dt>爪の断面</dt><dd>張り出し 2.5 / 下面 45°</dd>
+        <dt>スライド量</dt><dd>32 mm（約 30 mm で外れる）</dd>
+        <dt>ポケット・溝すきま</dt><dd>0.15 mm</dd>
+      </dl>
+    </section>
+
+    <section class="card">
+      <h2>付け外し</h2>
+      <ol class="steps">
+        <li>ブリッジを左ウェッジに付ける：ブリッジの左端をポケットの内側の口に当て、爪をリップの下に合わせて約 32 mm 左へスライド。先端の半円が奥に突き当たり、磁石がカチッと合う位置で止まる。</li>
+        <li>右半身を付ける：右半身をブリッジの右端に合わせて置き、約 32 mm 左へスライド。</li>
+        <li>外すときは右半身を右へ約 32 mm 引き抜く。ブリッジは左に付けたままでよい。</li>
+      </ol>
+      <p class="note">爪はブリッジの全周につながっていて、先端でもリップの下に潜る。片側だけ持っても、膝の上で真ん中が沈んでも、先端が浮いても継ぎ目が開かない。磁石はロック位置の保持とガタ取り用。</p>
+    </section>
+
+    <section class="card">
+      <h2>必要なもの</h2>
+      <table>
+        <tr><td>ウェッジ（左・右）PLA</td><td class="n">各1</td></tr>
+        <tr><td>ブリッジ PLA</td><td class="n">1</td></tr>
+        <tr><td>ネオジム磁石 Ø8×2</td><td class="n">4</td></tr>
+        <tr><td>M2×6 なべ小ねじ（元の M2×3.5 と交換）</td><td class="n">8</td></tr>
+        <tr><td>滑り止めゴム足</td><td class="n">適量</td></tr>
+      </table>
+      <p class="note"><b>極性</b>：ウェッジ側4個は同じ極を下向きに、ブリッジ側4個はその逆の極を上向きに入れる。</p>
+      <p class="note"><b>ネジ</b>：ケースのネジ穴は底面側に Ø5×0.7 mm の座ぐりがあり、元のネジの頭はその中に沈んでいる。ウェッジ越しだと 1.5 + 0.7 mm 余分に要るので M2×6（元よりスペーサーへ 0.3 mm 深く入る）。</p>
+    </section>
+  </aside>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script id="stl-data" type="application/json">__DATA__</script>
+<script>
+(() => {
+  const DATA = JSON.parse(document.getElementById('stl-data').textContent);
+  const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+  function parseSTL(b64) {
+    const bin = atob(b64), buf = new ArrayBuffer(bin.length), u8 = new Uint8Array(buf);
+    for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+    const dv = new DataView(buf), n = dv.getUint32(80, true);
+    const pos = new Float32Array(n * 9);
+    for (let i = 0; i < n; i++) {
+      const o = 84 + i * 50 + 12;
+      for (let j = 0; j < 9; j++) pos[i * 9 + j] = dv.getFloat32(o + j * 4, true);
+    }
+    const g = new THREE.BufferGeometry();
+    g.setAttribute('position', new THREE.BufferAttribute(pos, 3));
+    g.computeVertexNormals();
+    return g;
+  }
+
+  const stage = document.getElementById('stage');
+  const canvas = document.getElementById('cv');
+  const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(35, 1, 1, 5000);
+  camera.up.set(0, 0, 1);
+  const controls = new THREE.OrbitControls(camera, canvas);
+  controls.enableDamping = true;
+
+  scene.add(new THREE.HemisphereLight(0xffffff, 0x445566, 0.75));
+  const sun = new THREE.DirectionalLight(0xffffff, 0.7); sun.position.set(-200, -300, 500); scene.add(sun);
+  const fill = new THREE.DirectionalLight(0xffffff, 0.3); fill.position.set(300, 200, -200); scene.add(fill);
+
+  const mats = {};
+  function material(key, metal) {
+    const m = new THREE.MeshStandardMaterial({ roughness: metal ? 0.3 : 0.75, metalness: metal ? 0.8 : 0, side: THREE.DoubleSide, polygonOffset: true, polygonOffsetFactor: 1, polygonOffsetUnits: 1 });
+    mats[key] = m; return m;
+  }
+  const edgeMat = new THREE.LineBasicMaterial({ transparent: true, opacity: 0.35 });
+  function mesh(name, matKey, metal) {
+    const g = parseSTL(DATA[name]);
+    const m = new THREE.Mesh(g, mats[matKey] || material(matKey, metal));
+    m.add(new THREE.LineSegments(new THREE.EdgesGeometry(g, 28), edgeMat));
+    return m;
+  }
+
+  // 組立
+  const asm = new THREE.Group(); scene.add(asm);
+  const L = new THREE.Group(), R = new THREE.Group(), B = new THREE.Group();
+  asm.add(L, R, B);
+  const parts = {
+    caseL: mesh('w_case_L', 'case'), caseR: mesh('w_case_R', 'case'),
+    wedgeL: mesh('w_wedge_L', 'wedge'), wedgeR: mesh('w_wedge_R', 'wedge'),
+    bridge: mesh('w_bridge', 'bridge'),
+    magWL: mesh('w_mag_wedge_L', 'mag', true), magWR: mesh('w_mag_wedge_R', 'mag', true), magB: mesh('w_mag_bridge', 'mag', true),
+  };
+  L.add(parts.caseL, parts.wedgeL); R.add(parts.caseR, parts.wedgeR); B.add(parts.bridge, parts.magB);
+  const magWL = parts.magWL, magWR = parts.magWR;
+  L.add(magWL); R.add(magWR);
+
+  // 印刷プレビュー
+  const printGroup = new THREE.Group(); scene.add(printGroup);
+  const bed = new THREE.Group(); printGroup.add(bed);
+  const bedSize = 220;
+  const bedMat = new THREE.MeshBasicMaterial({ transparent: true, opacity: 0.5 });
+  const bedPlane = new THREE.Mesh(new THREE.PlaneGeometry(bedSize, bedSize), bedMat);
+  bedPlane.position.set(bedSize / 2, bedSize / 2, -0.05); bed.add(bedPlane);
+  const grid = new THREE.GridHelper(bedSize, 11); grid.rotation.x = Math.PI / 2; grid.position.set(bedSize / 2, bedSize / 2, 0); bed.add(grid);
+  const printMeshes = {};
+  for (const k of ['wedge_L', 'wedge_R', 'bridge', 'coupon_L', 'coupon_R']) {
+    const m = mesh(k, k === 'bridge' ? 'bridge' : 'wedge');
+    m.geometry.computeBoundingBox();
+    const bb = m.geometry.boundingBox, c = new THREE.Vector3(); bb.getCenter(c);
+    m.position.set(bedSize / 2 - c.x, bedSize / 2 - c.y, -bb.min.z);
+    m.userData.size = new THREE.Vector3().subVectors(bb.max, bb.min);
+    printMeshes[k] = m; printGroup.add(m);
+  }
+
+  function applyTheme() {
+    const bg = new THREE.Color(css('--stage'));
+    scene.background = bg;
+    mats.case.color.set(css('--case'));
+    mats.wedge.color.set(css('--accent'));
+    mats.bridge.color.set(css('--accent-2'));
+    mats.mag.color.set('#b9c0c7');
+    edgeMat.color.set(css('--fg'));
+    bedMat.color.set(css('--chip'));
+    grid.material.color = new THREE.Color(css('--line'));
+    grid.material.vertexColors = false;
+  }
+  applyTheme();
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', applyTheme);
+  new MutationObserver(applyTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+
+  // 視点
+  const views = {
+    asm: {
+      target: [0, -50, 8],
+      iso: [-170, -420, 260], front: [0, -520, 40], top: [0, -50, 560], bottom: [0, -50, -560],
+    },
+    print: {
+      target: [110, 110, 6],
+      iso: [-60, -160, 260], front: [110, -280, 60], top: [110, 110, 420], bottom: [110, 110, -420],
+    },
+  };
+  let mode = 'asm', curView = 'iso';
+  function setView(v) {
+    curView = v;
+    const set = views[mode === 'asm' ? 'asm' : 'print'];
+    controls.target.set(...set.target);
+    camera.position.set(...set[v]);
+    if (v === 'top' || v === 'bottom') camera.position.y += 0.01;
+    controls.update();
+  }
+  document.getElementById('views').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-view]'); if (b) setView(b.dataset.view);
+  });
+
+  // モード
+  const printInfo = document.getElementById('print-ctl');
+  const asmCtl = document.getElementById('asm-ctl');
+  const legend = document.getElementById('legend');
+  const printNotes = {
+    wedge_L: 'ケースが当たる平らな面をベッド側に。ポケット・ザグリ・磁石穴は上向きでサポート不要。',
+    wedge_R: 'ケースが当たる平らな面をベッド側に。ポケット・ザグリ・磁石穴は上向きでサポート不要。',
+    bridge: '磁石穴を上にして平置き。爪の下面は 45° なのでサポート不要。',
+    coupon_L: '左ウェッジのポケットまわりだけを切り出したもの。ブリッジと組んで、スライドの渋さ・爪のガタ・磁石の効きを確認する。',
+    coupon_R: '右ウェッジのポケットまわりだけを切り出したもの。ブリッジと組んで、スライドの渋さ・爪のガタ・磁石の効きを確認する。',
+  };
+  function setMode(m) {
+    mode = m;
+    document.querySelectorAll('#mode button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+    asm.visible = m === 'asm';
+    printGroup.visible = m !== 'asm';
+    for (const k in printMeshes) printMeshes[k].visible = k === m;
+    asmCtl.style.display = m === 'asm' ? 'flex' : 'none';
+    legend.hidden = m !== 'asm';
+    if (m !== 'asm') {
+      const s = printMeshes[m].userData.size;
+      printInfo.textContent = `${s.x.toFixed(1)} × ${s.y.toFixed(1)} × ${s.z.toFixed(1)} mm / ベッド 220 × 220 mm。${printNotes[m]}`;
+      printInfo.hidden = false;
+    } else printInfo.hidden = true;
+    setView(curView);
+  }
+  document.getElementById('mode').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-mode]'); if (b) setMode(b.dataset.mode);
+  });
+
+  // 右半身の付け外し: 前半で外側へ 32mm スライド、後半で持ち上げ
+  const sep = document.getElementById('sep');
+  const deg = Math.PI / 180;
+  const odir = new THREE.Vector2(Math.cos(0 * deg), 0).rotateAround(new THREE.Vector2(0, 0), 8 * deg).normalize();
+  function applySep() {
+    const t = parseFloat(sep.value);
+    const a = Math.min(1, t / 0.45), b = Math.max(0, (t - 0.5) / 0.5);
+    const ease = (x) => x * x * (3 - 2 * x);
+    R.position.set(odir.x * 32 * ease(a), odir.y * 32 * ease(a), 35 * ease(b));
+  }
+  sep.addEventListener('input', applySep);
+
+  const vis = { 'v-case': () => [parts.caseL, parts.caseR], 'v-wedge': () => [parts.wedgeL, parts.wedgeR], 'v-bridge': () => [parts.bridge], 'v-mag': () => [magWL, magWR, parts.magB] };
+  for (const id in vis) document.getElementById(id).addEventListener('change', (e) => vis[id]().forEach((o) => (o.visible = e.target.checked)));
+
+  function resize() {
+    const w = stage.clientWidth, h = stage.clientHeight;
+    renderer.setSize(w, h, false);
+    camera.aspect = w / h; camera.updateProjectionMatrix();
+  }
+  new ResizeObserver(resize).observe(stage);
+  resize();
+  setMode('asm');
+  (function loop() { controls.update(); renderer.render(scene, camera); requestAnimationFrame(loop); })();
+})();
+</script>
