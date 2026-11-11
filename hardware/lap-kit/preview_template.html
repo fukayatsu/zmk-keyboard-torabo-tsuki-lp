@@ -86,7 +86,7 @@ tr:first-child td { border-top: 0; }
 
 <header>
   <h1>torabo-tsuki LP (L) ラップキット</h1>
-  <p>シンプルケース + 水平ウェッジ + トルクヒンジ HG-TS03 + パームレスト用プレート</p>
+  <p>シンプルケース + ウェッジ（パームレスト置き場一体） + トルクヒンジ HG-TS03（使用時 片側 5° テンティング）</p>
 </header>
 
 <div class="wrap">
@@ -101,11 +101,9 @@ tr:first-child td { border-top: 0; }
     <div class="hint">ドラッグで回転 · ホイール/ピンチでズーム · 右ドラッグで移動</div>
     <div class="legend" id="legend">
       <span style="--c: var(--case)">ケース（簡略形状）</span>
-      <span style="--c: var(--accent)">ウェッジ</span>
+      <span style="--c: var(--accent)">ウェッジ（置き場一体）</span>
       <span style="--c: #c9ced3">ヒンジ HG-TS03（寸法は一部推定）</span>
-      <span style="--c: var(--accent-3)">プレート</span>
       <span style="--c: #7d858e">パームレスト（目安）</span>
-      <span style="--c: #b9c0c7">磁石 Ø8×2</span>
     </div>
   </div>
 
@@ -116,29 +114,20 @@ tr:first-child td { border-top: 0; }
         <button type="button" data-mode="asm" aria-pressed="true">組立</button>
         <button type="button" data-mode="wedge_L" aria-pressed="false">印刷: 左ウェッジ</button>
         <button type="button" data-mode="wedge_R" aria-pressed="false">印刷: 右ウェッジ</button>
-        <button type="button" data-mode="plate_L" aria-pressed="false">印刷: 左プレート</button>
-        <button type="button" data-mode="plate_R" aria-pressed="false">印刷: 右プレート</button>
         <button type="button" data-mode="coupon_L" aria-pressed="false">テスト片: 左</button>
         <button type="button" data-mode="coupon_R" aria-pressed="false">テスト片: 右</button>
       </div>
       <div id="asm-ctl" style="display:flex;flex-direction:column;gap:10px">
         <div class="slider">
-          <span>たたむ</span>
-          <input type="range" id="fold" min="0" max="1" step="0.01" value="0" aria-label="ヒンジでたたむ">
+          <span>使用 5°</span>
+          <input type="range" id="fold" min="0" max="1" step="0.01" value="0" aria-label="ヒンジでたたむ（使用時 5° から 90° まで）">
           <span>90°</span>
-        </div>
-        <div class="slider">
-          <span>プレート</span>
-          <input type="range" id="psep" min="0" max="1" step="0.01" value="0" aria-label="プレートの付け外し">
-          <span>外す</span>
         </div>
         <div class="checks">
           <label><input type="checkbox" id="v-case" checked>ケース</label>
           <label><input type="checkbox" id="v-wedge" checked>ウェッジ</label>
           <label><input type="checkbox" id="v-bridge" checked>ヒンジ</label>
-          <label><input type="checkbox" id="v-plate" checked>プレート</label>
           <label><input type="checkbox" id="v-rest" checked>パームレスト</label>
-          <label><input type="checkbox" id="v-mag" checked>磁石</label>
         </div>
       </div>
       <div id="print-ctl" class="print-info" hidden></div>
@@ -147,18 +136,14 @@ tr:first-child td { border-top: 0; }
     <section class="card">
       <h2>形状パラメータ</h2>
       <dl>
-        <dt>傾き</dt><dd>なし（水平）</dd>
+        <dt>傾き</dt><dd>使用時に片側 5° のテンティング（ヒンジの角度で付ける）。外側の縁は内側より約 17 mm 低い</dd>
         <dt>ハの字（片側）</dt><dd>8°</dd>
-        <dt>左右の最接近（奥側）</dt><dd>2.25 mm</dd>
-        <dt>ウェッジ厚</dt><dd>8.65 mm（一様）</dd>
-        <dt>ヒンジ</dt><dd>スガツネ HG-TS03（トルク 0.35 N·m、フリーストップ）1 個。羽根を左右のウェッジの底に面一で埋め、M4 タッピングネジで留める。軸は中心線上、底面の 3.05 mm 下。軸筒は底から約 6.8 mm 出る（ゴム足で逃がす）</dd>
+        <dt>左右の最接近（奥側）</dt><dd>ケースどうし約 25 mm（ウェッジの張り出しは使用時に当たり面で接する）</dd>
+        <dt>ウェッジ</dt><dd>199.5 × 211.7 mm（置き場一体、ハの字の向きのまま印刷）。厚さ 5.4 で全体が同じ高さ</dd>
+        <dt>ヒンジ</dt><dd>スガツネ HG-TS03（トルク 0.35 N·m、フリーストップ）1 個。羽根を左右のウェッジの底に面一で埋め、M4 ボルトと袋ナットで留める。袋ナットはケースの外（左右の間）に来るよう、ウェッジの内側に張り出しを付け、上面に座金を挟んで置き、スパナで押さえて締める。中心 y = −25。軸は中心線上、底面の 3.05 mm 下。軸筒は底から約 6.8 mm 出る。ヒンジ付近の左右の内側の面は、5° たたんだときに中心面で重なる当たり面で、使用時はここで止まる</dd>
         <dt>ヒンジの位置</dt><dd>奥寄り（中心 y = −18、長さ 30）</dd>
-        <dt>たたみ</dt><dd>背中合わせに 0〜90°（片側）で干渉なし。逆向き（真ん中が沈む向き）は片側約 5° でウェッジの内側の上角どうしが当たって止まる</dd>
-        <dt>爪（フランジ）</dt><dd>プレートの舌片の全周。張り出し 2.0、断面は 垂直 1.4 → 45° 2.0 → 垂直 2.0</dd>
-        <dt>プレート</dt><dd>91.2 × 192.4 mm、床 4.4 / 最大高さ 5.4 mm（置き場の深さ 1）</dd>
-        <dt>パームレスト置き場</dt><dd>82 × 62 mm、角 R4（80 × 60 × 18、R3 に片側 1 mm）。ウェッジより +5° ハの字</dd>
-        <dt>プレートのスライド</dt><dd>64 mm（約 62 mm で外れる）</dd>
-        <dt>ポケット・溝すきま</dt><dd>0.15 mm</dd>
+        <dt>たたみ</dt><dd>片側 5°（使用時、当たり面で止まる）〜 90°（底面どうしが向き合う）で干渉なし</dd>
+        <dt>パームレスト置き場</dt><dd>80 × 60 mm、角 R3（パームレストと同じ外形、平ら）。ウェッジより +5° ハの字。2026-11-11 に一体印刷のため 25 mm 奥へ</dd>
       </dl>
     </section>
 
@@ -166,26 +151,26 @@ tr:first-child td { border-top: 0; }
       <h2>付け外し</h2>
       <ol class="steps">
         <li>ウェッジをケースの底に M2×6 で留める。</li>
-        <li>ヒンジを付ける：左右のウェッジを裏返して並べ、底の掘り込みに HG-TS03 の羽根をはめ（軸筒が外向き）、M4 なべタッピングネジ 4 本で留める。</li>
-        <li>ゴム足を、軸筒より高く（7.5 mm 以上）なるように底に貼る。</li>
-        <li>プレート：舌片をウェッジ手前面の溝の口に合わせ、奥へ約 64 mm 差し込む。磁石がカチッと合う位置で止まる。外すときは手前へ引き抜く。</li>
-        <li>たたむ：パームレストを外し、左右の外側を下へ折って底面どうしを合わせる。トルクヒンジなので、どの角度でもその場で止まる。</li>
+        <li>ヒンジを付ける：左右のウェッジを並べ、底の掘り込みに HG-TS03 の羽根をはめ（軸筒が外向き）、M4×10 トラス小ねじ 4 本を下から通し、上面で座金と袋ナットを付ける。袋ナットは 7 mm のスパナで押さえる（柄は中心線側へ。ケースの壁とのすきまは 1 mm 未満）。PLA を挟むので締めすぎず、緩み止め剤を推奨。トラス頭はなべ頭より低く、たたんだときにネジ頭どうしが当たりにくい）。</li>
+        <li>ゴム足を底の外側寄り（中心線から 80 mm 以上）に貼る。テンティングで外側が下がるので、軸筒は机から浮く（足の高さは問わない）。ヒンジを付けるときは、平らだと当たり面が重なるので真ん中を少し持ち上げて並べる。</li>
+        <li>パームレストを置き場の外形に合わせ、両面テープで貼る。</li>
+        <li>たたむ：パームレストは付けたまま、左右の外側を下へ折って底面どうしを合わせる（パームレストは外向きになり、どこにもぶつからない）。トルクヒンジなので、どの角度でもその場で止まる。</li>
       </ol>
-      <p class="note">左右はヒンジでつながったまま（ケースはウェッジから M2 ネジで外せる）。プレートの爪は舌片の全周につながっていて、先端でもリップの下に潜る。磁石はロック位置の保持とガタ取り用。</p>
+      <p class="note">左右はヒンジでつながったまま（ケースはウェッジから M2 ネジで外せる）。</p>
     </section>
 
     <section class="card">
       <h2>必要なもの</h2>
       <table>
-        <tr><td>ウェッジ（左・右）PLA</td><td class="n">各1</td></tr>
+        <tr><td>ウェッジ（左・右、置き場一体）PLA</td><td class="n">各1</td></tr>
         <tr><td>スガツネ HG-TS03 トルクヒンジ</td><td class="n">1</td></tr>
-        <tr><td>M4×6 なべタッピングネジ（ヒンジ用）</td><td class="n">4</td></tr>
-        <tr><td>プレート（左・右）PLA</td><td class="n">各1</td></tr>
-        <tr><td>ネオジム磁石 Ø8×2</td><td class="n">8</td></tr>
+        <tr><td>M4×10 トラス小ねじ（ヒンジ用）</td><td class="n">4</td></tr>
+        <tr><td>M4 袋ナット（二面幅 7、ネジ穴の深さ 4 mm 以上）</td><td class="n">4</td></tr>
+        <tr><td>M4 平座金（小形、外径 8）</td><td class="n">4</td></tr>
         <tr><td>M2×6 なべ小ねじ（元の M2×3.5 と交換）</td><td class="n">8</td></tr>
-        <tr><td>ゴム足（高さ 7.5 mm 以上）</td><td class="n">適量</td></tr>
+        <tr><td>ゴム足</td><td class="n">適量</td></tr>
+        <tr><td>両面テープ（パームレストの固定）</td><td class="n">適量</td></tr>
       </table>
-      <p class="note"><b>磁石</b>：ウェッジ側（4個）はポケットの天井のくぼみ（深さ 2.1、ケース側に 1 mm 残す）。プレート側（4個）と向き合う極が引き合うように入れる。</p>
       <p class="note"><b>ネジ</b>：ケースのネジ穴は底面側に Ø5×0.7 mm の座ぐりがあり、元のネジの頭はその中に沈んでいる。ウェッジ越しだと 1.5 + 0.7 mm 余分に要るので M2×6（元よりスペーサーへ 0.3 mm 深く入る）。</p>
     </section>
   </aside>
@@ -255,19 +240,12 @@ tr:first-child td { border-top: 0; }
     caseL: mesh('w_case_L', 'case'), caseR: mesh('w_case_R', 'case'),
     wedgeL: mesh('w_wedge_L', 'wedge'), wedgeR: mesh('w_wedge_R', 'wedge'),
     hingeL: mesh('w_hinge_L', 'hinge', true), hingeR: mesh('w_hinge_R', 'hinge', true),
-    magWL: mesh('w_mag_wedge_L', 'mag', true), magWR: mesh('w_mag_wedge_R', 'mag', true),
-    plateL: mesh('w_plate_L', 'plate'), plateR: mesh('w_plate_R', 'plate'),
     restL: mesh('w_rest_L', 'rest'), restR: mesh('w_rest_R', 'rest'),
-    magPL: mesh('w_mag_plate_L', 'mag', true), magPR: mesh('w_mag_plate_R', 'mag', true),
   };
   L.add(parts.caseL, parts.wedgeL); R.add(parts.caseR, parts.wedgeR);
   FLi.add(parts.hingeL); FRi.add(parts.hingeR);
-  const PL = new THREE.Group(), PR = new THREE.Group();
-  PL.add(parts.plateL, parts.restL, parts.magPL); PR.add(parts.plateR, parts.restR, parts.magPR);
-  L.add(PL); R.add(PR);
+  L.add(parts.restL); R.add(parts.restR);
   mats.rest.transparent = true; mats.rest.opacity = 0.45; mats.rest.depthWrite = false;
-  const magWL = parts.magWL, magWR = parts.magWR;
-  L.add(magWL); R.add(magWR);
 
   // 印刷プレビュー
   const printGroup = new THREE.Group(); scene.add(printGroup);
@@ -278,8 +256,8 @@ tr:first-child td { border-top: 0; }
   bedPlane.position.set(bedSize / 2, bedSize / 2, -0.05); bed.add(bedPlane);
   const grid = new THREE.GridHelper(bedSize, 11); grid.rotation.x = Math.PI / 2; grid.position.set(bedSize / 2, bedSize / 2, 0); bed.add(grid);
   const printMeshes = {};
-  for (const k of ['wedge_L', 'wedge_R', 'plate_L', 'plate_R', 'coupon_L', 'coupon_R']) {
-    const m = mesh(k, k.startsWith('plate') ? 'plate' : 'wedge');
+  for (const k of ['wedge_L', 'wedge_R', 'coupon_L', 'coupon_R']) {
+    const m = mesh(k, 'wedge');
     m.geometry.computeBoundingBox();
     const bb = m.geometry.boundingBox, c = new THREE.Vector3(); bb.getCenter(c);
     m.position.set(bedSize / 2 - c.x, bedSize / 2 - c.y, -bb.min.z);
@@ -293,9 +271,7 @@ tr:first-child td { border-top: 0; }
     mats.case.color.set(css('--case'));
     mats.wedge.color.set(css('--accent'));
     mats.hinge.color.set('#c9ced3');
-    mats.plate.color.set(css('--accent-3'));
     mats.rest.color.set('#7d858e');
-    mats.mag.color.set('#b9c0c7');
     edgeMat.color.set(css('--fg'));
     bedMat.color.set(css('--chip'));
     grid.material.color = new THREE.Color(css('--line'));
@@ -334,12 +310,10 @@ tr:first-child td { border-top: 0; }
   const asmCtl = document.getElementById('asm-ctl');
   const legend = document.getElementById('legend');
   const printNotes = {
-    wedge_L: 'ケースが当たる平らな面をベッド側に。ポケット・ザグリ・磁石穴は上向きでサポート不要。',
-    wedge_R: 'ケースが当たる平らな面をベッド側に。ポケット・ザグリ・磁石穴は上向きでサポート不要。',
-    plate_L: '底面をベッド側に。舌片の爪の下面は 45° なのでサポート不要。',
-    plate_R: '底面をベッド側に。舌片の爪の下面は 45° なのでサポート不要。',
-    coupon_L: '左ウェッジのヒンジ取付部だけを切り出したもの。HG-TS03 の羽根のはまり具合とタッピングネジの効きを確認する。',
-    coupon_R: '右ウェッジのヒンジ取付部だけを切り出したもの。HG-TS03 の羽根のはまり具合とタッピングネジの効きを確認する。',
+    wedge_L: '上面（ケースが載る面・置き場）をベッド側に、ハの字の向きのまま置く。ヒンジの掘り込み（幅約 13 × 長さ 31）・軸筒の逃げ・ネジ頭の座ぐりは上向きに開く。ブリッジは無い。サポート不要。',
+    wedge_R: '上面（ケースが載る面・置き場）をベッド側に、ハの字の向きのまま置く。ヒンジの掘り込み（幅約 13 × 長さ 31）・軸筒の逃げ・ネジ頭の座ぐりは上向きに開く。ブリッジは無い。サポート不要。',
+    coupon_L: '左ウェッジのヒンジ取付部だけを切り出したもの（上面を下に、本番と同じ向き）。HG-TS03 の羽根のはまり具合とボルトの通りを確認する。',
+    coupon_R: '右ウェッジのヒンジ取付部だけを切り出したもの（上面を下に、本番と同じ向き）。HG-TS03 の羽根のはまり具合とボルトの通りを確認する。',
   };
   function setMode(m) {
     mode = m;
@@ -360,29 +334,19 @@ tr:first-child td { border-top: 0; }
     const b = e.target.closest('button[data-mode]'); if (b) setMode(b.dataset.mode);
   });
 
-  // たたむ: 左右を自分の軸まわりに 0〜90° 回す
+  // たたむ: 左右を自分の軸まわりに USE_TH (使用時、lap_kit.scad の use_th) 〜 90° 回す
+  const USE_TH = 5;
   const fold = document.getElementById('fold');
   function applyFold() {
-    const th = parseFloat(fold.value) * 90 * Math.PI / 180;
+    const th = (USE_TH + parseFloat(fold.value) * (90 - USE_TH)) * Math.PI / 180;
     FR.rotation.y = th; FL.rotation.y = -th;
   }
   fold.addEventListener('input', applyFold);
+  applyFold();
 
   const deg = Math.PI / 180;
 
-  // プレートの付け外し: 前半で手前へ 64mm スライド、後半で持ち上げ
-  const psep = document.getElementById('psep');
-  function applyPSep() {
-    const t = parseFloat(psep.value);
-    const a = Math.min(1, t / 0.45), b = Math.max(0, (t - 0.5) / 0.5);
-    const ease = (x) => x * x * (3 - 2 * x);
-    const d = 64 * ease(a), sn = Math.sin(8 * deg), cs = Math.cos(8 * deg);
-    PR.position.set(sn * d, -cs * d, 25 * ease(b));
-    PL.position.set(-sn * d, -cs * d, 25 * ease(b));
-  }
-  psep.addEventListener('input', applyPSep);
-
-  const vis = { 'v-case': () => [parts.caseL, parts.caseR], 'v-wedge': () => [parts.wedgeL, parts.wedgeR], 'v-bridge': () => [parts.hingeL, parts.hingeR], 'v-mag': () => [magWL, magWR, parts.magPL, parts.magPR], 'v-plate': () => [parts.plateL, parts.plateR], 'v-rest': () => [parts.restL, parts.restR] };
+  const vis = { 'v-case': () => [parts.caseL, parts.caseR], 'v-wedge': () => [parts.wedgeL, parts.wedgeR], 'v-bridge': () => [parts.hingeL, parts.hingeR], 'v-rest': () => [parts.restL, parts.restR] };
   for (const id in vis) document.getElementById(id).addEventListener('change', (e) => vis[id]().forEach((o) => (o.visible = e.target.checked)));
 
   function resize() {
