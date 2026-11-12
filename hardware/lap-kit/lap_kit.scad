@@ -30,15 +30,16 @@ hn_d     = 7.5;   // 軸筒の直径
 hn_off   = 4.25;  // 羽根の取付面から軸の中心まで
 hn_holes = [[10.5, -9], [10.5, 9]];   // 片側の羽根の穴 [軸からの距離 (ピッチ 21 の半分), 丁番の中心からの y (ピッチ 18)]
 hn_hole  = 4.3;
-hn_yc    = -25;   // 丁番の中心 (world y)
+hn_yc    = -50;   // 丁番の中心 (world y)。キーボードの前後の中ほど (2026-11-12 に -25 から。ハの字で手前ほど左右のケースが離れ、袋ナットとケースのすきまが広がる)
 hn_bolt  = 4.5;   // M4 ボルトの通し穴
 hn_nut   = 7;     // M4 袋ナットの二面幅
 hn_nut_h = 4;     // 袋ナットの六角部の高さ (目安)
 hn_cap_h = 7;     // 袋ナットの全高 (目安。ネジ穴の深さ 4〜5 なら M4x10 の先 (座金の上 3.8) は奥に当たらない)
 hn_wsh_d = 8;     // M4 平座金 (小形) の外径。ナットは上面に座金を挟んで置き、スパナで押さえて締める
 hn_wsh_t = 0.8;   // 座金の厚さ
+hn_fr    = 6;     // 張り出しの付け根の R
 hn_tab_m = 3;     // 張り出しの羽根の掘り込みからの余白 (y 方向)
-use_th   = 5;     // 使用時の片側テンティング角 [deg] (ヒンジの角度)。左右の内側の面がこの角度でぴったり当たり、平らな側へは戻らない
+use_th   = 8;     // 使用時の片側テンティング角 [deg] (ヒンジの角度)。左右の内側の面がこの角度でぴったり当たり、平らな側へは戻らない
 hn_clr   = 0.3;   // 羽根・軸筒のまわりのすきま
 hn_za    = hn_t - hn_off;  // 軸の高さ (底面 z=0 より下)
 // ウェッジの厚さ: 置き場部分と同じ (2026-11-11 に 8.65 から変更。ポケット・磁石が無くなったため)
@@ -140,6 +141,13 @@ function nut_cd(s) = s * 2 / sqrt(3);   // 二面幅 -> 外接円の直径
 module hn_tab_R() let(y0 = hn_yc - hn_len / 2 - hn_clr - hn_tab_m, y1 = hn_yc + hn_len / 2 + hn_clr + hn_tab_m, r = 2)
     translate([-3, y0]) offset(r = r) offset(delta = -r) square([60, y1 - y0]);  // 内側は stop_cut で切る
 module hn_tab(side) if (side == "R") hn_tab_R(); else mirror([1, 0]) hn_tab_R();
+// 張り出しとウェッジの内側の縁がつくるへこんだ角を半径 hn_fr で埋める。丸め処理 (offset 往復) は張り出しの
+// まわりの箱の中だけに掛け、元の外形と union する (全体に掛けると丸め誤差で段差が出るため)
+module hn_tab_fill(side) let(y0 = hn_yc - hn_len / 2 - hn_clr - hn_tab_m, y1 = hn_yc + hn_len / 2 + hn_clr + hn_tab_m)
+    intersection() {
+        offset(r = -hn_fr) offset(r = hn_fr) union() { case2d(side); hn_tab(side); }
+        mirror([side == "L" ? 1 : 0, 0]) translate([-3, y0 - 3 * hn_fr]) square([60, y1 - y0 + 6 * hn_fr]);
+    }
 module hn_cut(side) if (side == "R") hn_cut_R(); else mirror([1, 0, 0]) hn_cut_R();
 
 // 丁番の形 (確認用)。羽根は side ごと (R 側に軸筒を含める)
@@ -168,7 +176,7 @@ module hinge_leaf(side, barrel = true) let(sx = sgn(side), y0 = hn_yc - hn_len /
 // たたむ: 半身を軸 (中心線、z = hn_za) まわりに th 度回す (+ で外側が下がる = 背中合わせ。th = use_th が使用時)
 module fold(side, th) translate([0, 0, hn_za]) rotate([0, sgn(side) * th, 0]) translate([0, 0, -hn_za]) children();
 // 左右の内側の面 (当たり面): 軸を通り、use_th だけたたんだときに鉛直 (中心面) になる面。
-// 半身の座標 (th = 0) では上ほど中心線を越えて反対側へ出る (上面で約 0.74 mm)
+// 半身の座標 (th = 0) では上ほど中心線を越えて反対側へ出る (use_th 8 で上面で約 1.2 mm)
 module stop_cut(side) mirror([side == "L" ? 1 : 0, 0, 0])
     translate([0, 0, hn_za]) rotate([0, -use_th, 0]) translate([-1000, -500, -500]) cube(1000);
 
@@ -186,6 +194,7 @@ module case2d(side) translate([sgn(side) * x_off, 0]) rotate(sgn(side) * splay) 
 module top2d(side) union() {
     case2d(side);
     hn_tab(side);
+    hn_tab_fill(side);
     hull() {
         intersection() { case2d(side); lrect(side, -1000, 1000, -1000, FE + fill_band); }
         local3(side) rest2d();
