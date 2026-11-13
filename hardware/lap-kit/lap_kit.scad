@@ -30,17 +30,22 @@ hn_d     = 7.5;   // 軸筒の直径
 hn_off   = 4.25;  // 羽根の取付面から軸の中心まで
 hn_holes = [[10.5, -9], [10.5, 9]];   // 片側の羽根の穴 [軸からの距離 (ピッチ 21 の半分), 丁番の中心からの y (ピッチ 18)]
 hn_hole  = 4.3;
-hn_yc    = -50;   // 丁番の中心 (world y)。キーボードの前後の中ほど (2026-11-12 に -25 から。ハの字で手前ほど左右のケースが離れ、袋ナットとケースのすきまが広がる)
+hn_ycs   = [-35, -85];  // 丁番の中心 (world y)。2 個を同じ軸 (中心線) に前後に離して並べ、使用時の剛性を上げる
+                        // (2026-11-12: 1 個 (-25 -> -50) から 2 個に。奥は袋ナットとケースのすきまで -35 まで (座金 Ø8 とのすきま約 2 mm))
 hn_bolt  = 4.5;   // M4 ボルトの通し穴
 hn_nut   = 7;     // M4 袋ナットの二面幅
 hn_nut_h = 4;     // 袋ナットの六角部の高さ (目安)
 hn_cap_h = 7;     // 袋ナットの全高 (目安。ネジ穴の深さ 4〜5 なら M4x10 の先 (座金の上 3.8) は奥に当たらない)
 hn_wsh_d = 8;     // M4 平座金 (小形) の外径。ナットは上面に座金を挟んで置き、スパナで押さえて締める
 hn_wsh_t = 0.8;   // 座金の厚さ
-hn_fr    = 6;     // 張り出しの付け根の R
+hn_er    = 5;     // 張り出しの内側の縁 (当たり面) の前後の角の R (たたんだとき上に来る角)
+hn_fr2   = 15;    // 張り出しの手前の付け根の R (置き場へ向かう斜めの縁との鈍角)
 hn_tab_m = 3;     // 張り出しの羽根の掘り込みからの余白 (y 方向)
 use_th   = 8;     // 使用時の片側テンティング角 [deg] (ヒンジの角度)。左右の内側の面がこの角度でぴったり当たり、平らな側へは戻らない
 hn_clr   = 0.3;   // 羽根・軸筒のまわりのすきま
+// 張り出し (2 個をまたぐ 1 枚) の前後の端
+hn_ty0   = min(hn_ycs) - hn_len / 2 - hn_clr - hn_tab_m;
+hn_ty1   = max(hn_ycs) + hn_len / 2 + hn_clr + hn_tab_m;
 hn_za    = hn_t - hn_off;  // 軸の高さ (底面 z=0 より下)
 // ウェッジの厚さ: 置き場部分と同じ (2026-11-11 に 8.65 から変更。ポケット・磁石が無くなったため)
 wedge_t  = pl_t;
@@ -75,6 +80,7 @@ HOLES_R = [[121.7,113.8],[121.7,56.8],[28.5,121.8],[-16.2,39.1]];
 W_CASE = 154;
 Y_FRONT = -107.6;  // ケース手前端 (親指部分, ピボット基準 local y)
 FE      = -98.2;   // 手前の直線辺 (local x 42〜151) の y
+BK      = [[7.0, 4.08], [36.4, 5.26]];  // 奥の直線辺 (内側の段より外側) の 2 点 (local)
 
 // 置き場の中心 (local)。x: 回転前のパームレストの外側の辺がウェッジの外側の辺 (x = W_CASE) から pr_out はみ出す位置
 pr_out   = 5;
@@ -130,28 +136,51 @@ module lrect(side, x0, x1, y0, y1)
 
 module ycyl(x, z, y0, y1, d) translate([x, y1, z]) rotate([90, 0, 0]) cylinder(d = d, h = y1 - y0, $fn = 48);
 // R 側のウェッジから除く部分 (world): 羽根の掘り込み (底面と面一)・軸筒の逃げ・下穴
-module hn_cut_R() {
-    y0 = hn_yc - hn_len / 2 - hn_clr; y1 = hn_yc + hn_len / 2 + hn_clr;
+module hn_cut_R() for (yc = hn_ycs) {
+    y0 = yc - hn_len / 2 - hn_clr; y1 = yc + hn_len / 2 + hn_clr;
     translate([-1, y0, -1]) cube([hn_w + hn_clr + 1, y1 - y0, 1 + hn_t]);
     ycyl(0, hn_za, y0, y1, hn_d + 2 * hn_clr);
-    for (h = hn_holes) translate([h[0], hn_yc + h[1], -1]) cylinder(d = hn_bolt, h = wedge_t + 2, $fn = 24);
+    for (h = hn_holes) translate([h[0], yc + h[1], -1]) cylinder(d = hn_bolt, h = wedge_t + 2, $fn = 24);
 }
 function nut_cd(s) = s * 2 / sqrt(3);   // 二面幅 -> 外接円の直径
 // ウェッジ内側のヒンジ用の張り出し (world 2D, R)。中心線近くからケースの中まで
-module hn_tab_R() let(y0 = hn_yc - hn_len / 2 - hn_clr - hn_tab_m, y1 = hn_yc + hn_len / 2 + hn_clr + hn_tab_m, r = 2)
+module hn_tab_R() let(y0 = hn_ty0, y1 = hn_ty1, r = 2)
     translate([-3, y0]) offset(r = r) offset(delta = -r) square([60, y1 - y0]);  // 内側は stop_cut で切る
 module hn_tab(side) if (side == "R") hn_tab_R(); else mirror([1, 0]) hn_tab_R();
-// 張り出しとウェッジの内側の縁がつくるへこんだ角を半径 hn_fr で埋める。丸め処理 (offset 往復) は張り出しの
-// まわりの箱の中だけに掛け、元の外形と union する (全体に掛けると丸め誤差で段差が出るため)
-module hn_tab_fill(side) let(y0 = hn_yc - hn_len / 2 - hn_clr - hn_tab_m, y1 = hn_yc + hn_len / 2 + hn_clr + hn_tab_m)
-    intersection() {
-        offset(r = -hn_fr) offset(r = hn_fr) union() { case2d(side); hn_tab(side); }
-        mirror([side == "L" ? 1 : 0, 0]) translate([-3, y0 - 3 * hn_fr]) square([60, y1 - y0 + 6 * hn_fr]);
-    }
+// 張り出しの奥: 張り出しからケースの奥の辺まで、左右のケースの間のへこみと奥の内側の角の段を埋める。
+// 奥の縁はケースの奥の直線辺 (BK) をそのまま中心線まで延ばした直線 (ケースの辺とは同じ直線でつながる)
+module hn_back_fill_R() let(a = to_world2("R", BK[0]), b = to_world2("R", BK[1]),
+                            yl = a[1] + (b[1] - a[1]) / (b[0] - a[0]) * (-3 - a[0]))
+    polygon([[-3, hn_ty1 - 3], [-3, yl], a, [a[0], hn_ty1 - 3]]);
+// 張り出しの手前: 置き場へ向かう斜めの縁とのへこんだ角 (鈍角) を半径 hn_fr2 で埋める。丸め処理 (offset 往復) は
+// 張り出しのまわりの箱の中だけに掛け、元の外形と union する (全体に掛けると丸め誤差で段差が出るため)
+module hn_tab_fill(side) {
+    if (side == "R") hn_back_fill_R(); else mirror([1, 0]) hn_back_fill_R();
+    hn_round(side, hn_fr2, hn_ty0 - 3 * hn_fr2, hn_ty0 + hn_fr2);
+}
+module hn_round(side, r, y0, y1) intersection() {
+    offset(r = -r) offset(r = r) union() { base2d(side); hn_tab(side); }
+    mirror([side == "L" ? 1 : 0, 0]) translate([-3, y0]) square([60, y1 - y0]);
+}
+// 張り出しの内側の縁 (当たり面) の前後の角を半径 hn_er で丸める切り取り (R)。当たり面は傾いているので、
+// 当たり面の位置 (2D の x = 0) で丸めた形を当たり面に沿って斜めに押し出す (y 方向は変わらない)
+module hn_corner_cut_R() let(yb = to_world2("R", BK[0])[1], r = hn_er,
+                             t = tan(use_th))
+    multmatrix([[1, 0, -t, hn_za * t], [0, 1, 0, 0], [0, 0, 1, 0]]) translate([0, 0, -1])
+        linear_extrude(wedge_t + 2) for (b = [[hn_ty0 - 5, hn_ty0 + r + 1], [yb - 3 * r, yb + 5]])
+            difference() {
+                translate([-5, b[0]]) square([r + 6, b[1] - b[0]]);
+                offset(r = r) offset(delta = -r) intersection() {
+                    top2d("R");
+                    translate([0, -500]) square(1000);
+                }
+            }
+module hn_corner_cut(side) if (side == "R") hn_corner_cut_R(); else mirror([1, 0, 0]) hn_corner_cut_R();
 module hn_cut(side) if (side == "R") hn_cut_R(); else mirror([1, 0, 0]) hn_cut_R();
 
-// 丁番の形 (確認用)。羽根は side ごと (R 側に軸筒を含める)
-module hinge_leaf(side, barrel = true) let(sx = sgn(side), y0 = hn_yc - hn_len / 2) {
+// 丁番の形 (確認用)。羽根は side ごと (R 側に軸筒を含める)。hn_ycs の全部
+module hinge_leaf(side, barrel = true) for (yc = hn_ycs) hinge_leaf1(side, yc, barrel);
+module hinge_leaf1(side, hn_yc, barrel) let(sx = sgn(side), y0 = hn_yc - hn_len / 2) {
     difference() {
         translate([sx > 0 ? 0 : -hn_w, y0, 0]) cube([hn_w, hn_len, hn_t]);
         for (h = hn_holes) translate([sx * h[0], hn_yc + h[1], -1]) cylinder(d = hn_hole, h = 5, $fn = 16);
@@ -191,14 +220,17 @@ module case2d(side) translate([sgn(side) * x_off, 0]) rotate(sgn(side) * splay) 
 // 上から見たウェッジ全体の外形 (world 2D): ケース外形 + (ケース手前の帯とパームレストの凸包)。
 // 内側はケース手前の内側の角からパームレスト手前の内側の角へ、外側はケース手前の外側の角から
 // パームレスト奥の外側の角へ、まっすぐつながる
-module top2d(side) union() {
+module base2d(side) union() {
     case2d(side);
-    hn_tab(side);
-    hn_tab_fill(side);
     hull() {
         intersection() { case2d(side); lrect(side, -1000, 1000, -1000, FE + fill_band); }
         local3(side) rest2d();
     }
+}
+module top2d(side) union() {
+    base2d(side);
+    hn_tab(side);
+    hn_tab_fill(side);
 }
 
 /* ---------- ウェッジ ---------- */
@@ -216,6 +248,7 @@ module wedge_world(side) {
         }
         hn_cut(side);
         stop_cut(side);
+        hn_corner_cut(side);
         local3(side) for (f = ft_pos()) translate([f[0], f[1], -1]) cylinder(d = ft_d, h = 1 + ft_dep);
     }
 }
@@ -225,7 +258,7 @@ module coupon_world(side) {
     s = sgn(side);
     intersection() {
         wedge_world(side);
-        translate([s > 0 ? -2 : -(hn_w + 8), hn_yc - hn_len / 2 - 6, -1]) cube([hn_w + 10, hn_len + 12, 100]);
+        translate([s > 0 ? -2 : -(hn_w + 8), hn_ycs[0] - hn_len / 2 - 6, -1]) cube([hn_w + 10, hn_len + 12, 100]);  // 奥のヒンジ 1 個分
     }
 }
 
