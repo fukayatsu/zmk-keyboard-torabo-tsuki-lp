@@ -13,7 +13,7 @@ import sys
 
 HERE = pathlib.Path(__file__).resolve().parent
 BUILD = HERE / "build"
-PRINT_PARTS = ["wedge_L", "wedge_R", "coupon_L", "coupon_R"]
+PRINT_PARTS = ["wedge_L", "wedge_R", "coupon_L", "coupon_R", "coupon_sw", "sw_lid"]
 WORLD_PARTS = ["w_hinge_L", "w_hinge_R", "w_case_L", "w_case_R", "w_wedge_L", "w_wedge_R", "w_rest_L", "w_rest_R"]
 
 

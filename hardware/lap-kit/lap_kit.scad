@@ -3,7 +3,7 @@
 //                  手前にパームレスト置き場のプレートを一体で持つ (上面を下にして 1 部品で印刷)
 //   - hinge: スガツネ HG-TS03 (トルクヒンジ) 1 個で左右のウェッジの底を直接つなぐ。背中合わせにたたむ
 //
-// part = "assembly" | "wedge_L" | "wedge_R" | "coupon_L" | "coupon_R"
+// part = "assembly" | "wedge_L" | "wedge_R" | "coupon_L" | "coupon_R" | "coupon_sw" | "sw_lid" (2 個)
 part = "assembly";
 
 // 公式リポジトリ (sekigon-gonnoc/torabo-tsuki-lp) を ./official に clone して使う
@@ -52,6 +52,70 @@ hn_clr   = 0.3;   // 羽根・軸筒のまわりのすきま
 hn_ty0   = -104.3;  // 手前の端は固定 (丁番を -85 に置いていたときの位置 = ケース手前の内側の角のあたり。丁番を動かしても形を変えない)
 hn_ty1   = max(hn_ycs) + hn_len / 2 + hn_clr + hn_tab_m;
 hn_za    = hn_t - hn_off;  // 軸の高さ (底面 z=0 より下)
+// 開閉検出スイッチ: オムロン D2F-01 (ピン押しボタン形、微小負荷用・金合金接点、はんだづけ端子) を左右に 1 個ずつ、
+// どちらも 2 個の丁番の間の中央に左右対称に置く (2026-11-19。はじめはレバー形 D2F-01L を左右で前後にずらしたが、
+// 持ち運び時に出っ張らないピン押しボタン形で左右とも中央に、というユーザーの要望で変更)。
+// それぞれのキーボードの電池 + 線に直列に入れ (COM と NO)、使用時の角度まで開くと電源が入る。たたむと切れる。
+// 左右の回路は独立でヒンジをまたぐ配線は無い。
+// 押しボタンは本体の中心から sw_pin_y 寄っているので、左右でスイッチの向きを反対にし (R は奥寄り、L は手前寄り)、
+// それぞれの押しボタンが相手のスイッチ本体の平らな面 (押しボタンの無い側) を押すようにする (ユーザーの案。
+// はじめは同じ向きで押しボタンどうしを突き合わせていた)。押しボタンの押し込み量は左右の本体どうしのすきまで
+// 決まり、左右のばねの釣り合いによらない。
+// 本体の面どうしを平行に向かい合わせるため、スイッチは使用時の姿勢で水平 (ウェッジに対して use_th 傾く。
+// 押しボタンの向きが当たり面に垂直) に置く。以下の sw_* の x・z は「使用時の座標」(半身を use_th たたんだ
+// world。当たり面が x = 0 の鉛直面) で書き、fold(side, -use_th) で半身の座標へ戻す。
+// 横倒し (厚さ 5.8 が上下) で底から掘ったポケットに入れる。上面側は閉じた床 (sw_floor 以上) で、上には何も出ない。
+// 固定は底のふた (sw_lid): ふたのピンをスイッチの取付穴 Ø2 に差し、ふたを M2×8 皿小ねじ (上から。頭は上面と面一) と
+// ふたに埋めた M2 ナットで留める (2026-11-19 ユーザーの案: ヒンジと同じ皿ボルト + ナット。スイッチの取付穴に直接
+// 通すと 皿頭 + スイッチ 5.8 + ナット が板厚と たたみのすきまに収まらないので、ふたのネジをこの方式にした)。
+// ナットはふたの底側の六角の長いくぼみに入って回らず、上からドライバーだけで締められる (開いた姿勢のまま調整できる)。
+// ふたの長穴でスイッチを当たり面に対して前後 (x) に ±sw_adj 動かし、入り切りの角度を合わせる (動作位置の公差 ±0.3、
+// 動作後の動き 0.25 以上と余裕が小さいため)。ふたはウェッジの底に平行 (半身の座標)、スイッチは 8° 傾くので、ふたの
+// スイッチの下は斜めの台、ピンも 8° 傾く。配線はふたの上の底の溝を通り、電池カバーの壁の真下で上面へ抜ける。
+// 寸法はメーカーのカタログ (B036-E1-12): 本体 12.8 × 5.8 × 6.5、取付穴 Ø2 ピッチ 6.5 (押しボタン側の面から 5.0)、
+// 押しボタン 1.2 × 2.9 (片方の取付穴から 1.2 = 本体の中心から 2.05)、取付穴から押しボタン先まで 動作位置 5.5±0.3、
+// 動作までの動き 0.5 以下、動作後の動き 0.25 以上、端子の長さ 3.5
+sw_len   = 12.8;  // 本体の長さ (y)
+sw_h     = 6.5;   // 本体の高さ (押しボタン側の面から端子側の面まで。横倒しなので x)
+sw_th    = 5.8;   // 本体の厚さ (横倒しなので z)
+sw_pitch = 6.5;   // 取付穴のピッチ
+sw_hole_x = 5.0;  // 押しボタン側の面から取付穴まで
+sw_pin_y = 2.05;  // 押しボタンの位置 (本体の中心から。R は奥寄り、L は手前寄りに向ける。左右で 4.1 離れる)
+sw_floor = 0.6;   // ポケットの床 (上面側に残す厚さの最小)
+sw_clr   = 0.2;   // 本体のまわりのすきま
+sw_x0    = 0.3;   // 押しボタン側の面の位置 (当たり面から。長穴の中央のとき)。左右の本体のすきまは 2 倍の 0.6 で、
+                  // 押しボタンの動作位置 (本体の面から 0.5±0.3) の少し手前。左右どちらかの長穴で詰める
+sw_adj   = 0.55;  // 長穴による調整しろ (±)
+sw_term  = 4.5;   // 端子と配線の場所 (端子側の面より外側へ)
+sw_yc    = (hn_ycs[0] + hn_ycs[1]) / 2;   // スイッチの中心 (world y)。2 個の丁番の間の中央
+// 使用時の座標での上面・底面の高さ (x の位置で)
+function sw_ztop(x) = hn_za + (pl_t - hn_za) / cos(use_th) - x * tan(use_th);
+function sw_zbot(x) = hn_za - hn_za / cos(use_th) - x * tan(use_th);
+sw_xb    = sw_x0 + sw_adj + sw_h + sw_clr;          // 本体の場所の外側の端
+sw_xt    = sw_xb + sw_term;                          // 端子の場所の外側の端
+sw_zc    = sw_ztop(sw_xb) - sw_floor / cos(use_th);  // 本体の場所の天井
+sw_zb    = sw_zc - 0.1 - sw_th - 0.05;               // 本体の底 = ふたの当たる面
+// ふた (半身の座標、R 向き)
+sw_lid_z0 = -2.45; // ふたの底
+sw_lid_z1 = -1.65; // ふたの板の上の面 (スイッチの下。これより内側ではスイッチのほうが下に出る)
+sw_lid_x0 = 3.8;   // ふたの内側の端 (これより内側は本体が見える)
+sw_lid_x1 = 19;    // ふたの外側の端
+sw_lid_xe = 12.9;  // ふたの外側の厚い部分 (底面に当たる) の内側の端。ポケットの外側の端より外
+sw_lid_hw = 6.8;   // ふたの幅の半分 (y)
+sw_lid_sx = 15;    // ふたのネジの位置 (x)。皿頭が電池カバーの壁に掛からない位置
+sw_lid_sy = 4.0;   // ふたのネジの位置 (y、中心から ±)
+sw_bolt  = 2.3;    // M2 の通し穴・ふたの長穴の幅
+sw_csk_d = 4.2;    // M2 皿小ねじの座ぐりの上面での直径 (頭 Ø4 以下。90° の円錐)
+sw_nut   = 4.1;    // M2 ナットの二面幅 + すきま
+sw_nut_h = 1.6;    // M2 ナットの厚さ (1 種)
+sw_pin_d = 1.8;    // ふたのピン (スイッチの取付穴 Ø2 に入る)
+sw_pin_h = 2.2;
+// 配線: ポケットの外側の端から底の溝 (sw_wire_w) を通り、ケースの内側の辺の手前 (電池カバーの壁の真下あたり) で
+// 上面へ抜ける長穴へ。長穴はケースの内側の辺から内側へ sw_wire_in、ケースの下へ sw_wire_out
+sw_wire_w = 2.5;
+sw_wire_in = 2.5;
+sw_wire_out = 1;
+function sw_xe() = x_off - sw_yc * tan(splay);   // スイッチの位置でのケースの内側の辺 (world x、平らなとき)
 // ウェッジの厚さ: 置き場部分と同じ (2026-11-11 に 8.65 から変更。ポケット・磁石が無くなったため)
 wedge_t  = pl_t;
 
@@ -215,6 +279,74 @@ module fold(side, th) translate([0, 0, hn_za]) rotate([0, sgn(side) * th, 0]) tr
 module stop_cut(side) mirror([side == "L" ? 1 : 0, 0, 0])
     translate([0, 0, hn_za]) rotate([0, -use_th, 0]) translate([-1000, -500, -500]) cube(1000);
 
+/* ---------- 開閉検出スイッチ (オムロン D2F-01) ---------- */
+
+// 半身の座標 (R 向き、y はスイッチの中心から) で書いたものを置く
+module sw_frame(side) mirror([side == "L" ? 1 : 0, 0, 0]) translate([0, sw_yc, 0]) children();
+// 使用時の座標で書いたものを半身の座標へ戻す
+module sw_use() fold("R", -use_th) children();
+// ウェッジから除く部分 (R 向き、y はスイッチの中心から)
+module sw_cut0() let(hl = sw_len / 2 + sw_clr, zt = sw_ztop(sw_xt) - sw_floor / cos(use_th)) {
+    sw_use() {
+        // 本体の場所 (当たり面を抜ける)
+        translate([-5, -hl, -20]) cube([5 + sw_xb, 2 * hl, 20 + sw_zc]);
+        // 端子・配線の場所 (上面が下がるぶん天井を下げる)
+        translate([sw_xb - 0.01, -hl, -20]) cube([sw_term + 0.01, 2 * hl, 20 + zt]);
+        // 配線の溝 (底) と、上面へ抜ける長穴
+        translate([sw_xt - 0.5, -sw_wire_w / 2, -20]) cube([sw_xe() - sw_xt, sw_wire_w, 20 + sw_zb + 1.6]);
+        translate([sw_xe() - sw_wire_in, -sw_wire_w / 2, -20]) cube([sw_wire_in + sw_wire_out, sw_wire_w, 40]);
+    }
+    // ふたの M2 皿小ねじ (上面に垂直。通し穴と、上面に開く 90° の円錐の座ぐり)
+    for (dy = [-1, 1] * sw_lid_sy) translate([sw_lid_sx, dy, 0]) {
+        translate([0, 0, -1]) cylinder(d = sw_bolt, h = wedge_t + 2, $fn = 24);
+        translate([0, 0, wedge_t - (sw_csk_d - sw_bolt) / 2])
+            cylinder(d1 = sw_bolt, d2 = sw_csk_d + 0.02, h = (sw_csk_d - sw_bolt) / 2 + 0.01, $fn = 32);
+    }
+}
+module sw_cuts(side) sw_frame(side) sw_cut0();
+// ふた (R 向き)。左右で同じ形 (前後対称なので、左右反転 = 180° 回転)
+module sw_lid0() {
+    difference() {
+        union() {
+            // 板
+            translate([sw_lid_x0, -sw_lid_hw, sw_lid_z0]) cube([sw_lid_x1 - sw_lid_x0, 2 * sw_lid_hw, sw_lid_z1 - sw_lid_z0]);
+            // 外側の厚い部分 (ウェッジの底に当たる)
+            translate([sw_lid_xe, -sw_lid_hw, sw_lid_z0]) cube([sw_lid_x1 - sw_lid_xe, 2 * sw_lid_hw, -sw_lid_z0]);
+            // スイッチの下の斜めの台 (スイッチの底の面まで)
+            intersection() {
+                translate([sw_lid_x0, -sw_len / 2, sw_lid_z0]) cube([sw_xb - sw_lid_x0, sw_len, 3]);
+                sw_use() translate([-50, -50, -50]) cube([100, 100, 50 + sw_zb]);
+            }
+        }
+        for (dy = [-1, 1] * sw_lid_sy) {
+            // 長穴
+            hull() for (dx = [-1, 1] * sw_adj) translate([sw_lid_sx + dx, dy, sw_lid_z0 - 1]) cylinder(d = sw_bolt, h = 5, $fn = 24);
+            // ナットの入る六角の長いくぼみ (底側に開く。二面が x に平行で、ナットは回らずに前後に動ける)
+            hull() for (dx = [-1, 1] * sw_adj) translate([sw_lid_sx + dx, dy, sw_lid_z0 - 1])
+                cylinder(d = nut_cd(sw_nut), h = 1 + sw_nut_h, $fn = 6);
+        }
+    }
+    // ピン (スイッチの取付穴の向き = 8° 傾く)
+    sw_use() for (dy = [-1, 1] * sw_pitch / 2) translate([sw_x0 + sw_hole_x, dy, sw_zb - 0.6])
+        cylinder(d = sw_pin_d, h = sw_pin_h + 0.6, $fn = 24);
+}
+// スイッチの形 (確認用)。押しボタンは押された位置。pin_y は押しボタンの寄っている向き
+module sw_dummy0(pin_y = sw_pin_y) {
+    sw_use() {
+        translate([sw_x0, -sw_len / 2, sw_zb + 0.05]) cube([sw_h, sw_len, sw_th]);
+        translate([-sw_x0 + 0.02, pin_y - 0.6, sw_zb + 0.05 + sw_th / 2 - 1.45]) cube([2 * sw_x0 + 0.01, 1.2, 2.9]);
+        for (dy = [-5.08, 0, 5.08]) translate([sw_x0 + sw_h, dy - 0.6, sw_zb + sw_th / 2 - 0.15]) cube([3.5, 1.2, 0.4]);
+    }
+    sw_lid0();
+    // M2×8 皿小ねじ (頭は上面と面一、座ぐりより少し小さく描く) とナット
+    for (dy = [-1, 1] * sw_lid_sy) translate([sw_lid_sx, dy, 0]) {
+        translate([0, 0, wedge_t - 0.9]) cylinder(d1 = 2, d2 = 3.8, h = 0.9, $fn = 24);
+        translate([0, 0, wedge_t - 8]) cylinder(d = 2, h = 7.2, $fn = 16);
+        translate([0, 0, sw_lid_z0]) cylinder(d = nut_cd(4), h = sw_nut_h, $fn = 6);
+    }
+}
+module sw_dummy(side) sw_frame(side) sw_dummy0(side == "R" ? sw_pin_y : -sw_pin_y);
+
 /* ---------- パームレスト置き場 ---------- */
 
 module rest_place() translate([pr_cx, pr_cy]) rotate(pr_rot) children();
@@ -255,6 +387,7 @@ module wedge_world(side) {
         hn_cut(side);
         stop_cut(side);
         hn_corner_cut(side);
+        sw_cuts(side);
         local3(side) for (f = ft_pos()) translate([f[0], f[1], -1]) cylinder(d = ft_d, h = 1 + ft_dep);
     }
 }
@@ -266,6 +399,12 @@ module coupon_world(side) {
         wedge_world(side);
         translate([s > 0 ? -2 : -(hn_w + 8), hn_ycs[0] - hn_len / 2 - 6, -1]) cube([hn_w + 10, hn_len + 12, 100]);  // 奥のヒンジ 1 個分
     }
+}
+
+// テスト片: 開閉検出スイッチのポケットだけ切り出し (スイッチのはまり具合・ふた・配線の穴を確認)。R 側の形
+module coupon_sw_world() intersection() {
+    wedge_world("R");
+    translate([-3, sw_yc - sw_len / 2 - 2.3, -1]) cube([sw_xe() + sw_wire_out + 5, sw_len + 4.6, 100]);
 }
 
 // 印刷用: 上面 (ケースが載る面) を下にして置く (x 軸まわりに 180° 返す。198.4 x 211.7 に収まる)。
@@ -281,8 +420,8 @@ module case_simple(side) {
 }
 module rest_dummy() translate([0, 0, pl_t]) linear_extrude(pr_h) rest2d();
 
-if (part == "w_hinge_L") hinge_leaf("L");
-else if (part == "w_hinge_R") hinge_leaf("R");
+if (part == "w_hinge_L") { hinge_leaf("L"); sw_dummy("L"); }
+else if (part == "w_hinge_R") { hinge_leaf("R"); sw_dummy("R"); }
 else if (part == "w_case_L") place("L") case_simple("L");
 else if (part == "w_case_R") place("R") case_simple("R");
 else if (part == "w_wedge_L") wedge_world("L");
@@ -297,6 +436,7 @@ else if (part == "assembly") {
         color("dimgray") place(side) case_stl(side);
         color("orange") wedge_world(side);
         color("silver") hinge_leaf(side);
+        color("crimson") sw_dummy(side);
         color("#333", 0.5) local3(side) rest_dummy();
     }
 } else if (part == "wedge_L") {
@@ -307,4 +447,9 @@ else if (part == "assembly") {
     print_pose("L") coupon_world("L");
 } else if (part == "coupon_R") {
     print_pose("R") coupon_world("R");
+} else if (part == "coupon_sw") {
+    print_pose("R") coupon_sw_world();
+} else if (part == "sw_lid") {
+    // ふた: 平らな面を下、ピンを上にして印刷
+    translate([-sw_lid_x0, 0, -sw_lid_z0]) sw_lid0();
 }

@@ -102,7 +102,7 @@ tr:first-child td { border-top: 0; }
     <div class="legend" id="legend">
       <span style="--c: var(--case)">ケース（簡略形状）</span>
       <span style="--c: var(--accent)">ウェッジ（置き場一体）</span>
-      <span style="--c: #c9ced3">ヒンジ HG-TS03</span>
+      <span style="--c: #c9ced3">ヒンジ HG-TS03・開閉検出スイッチ</span>
       <span style="--c: #7d858e">パームレスト（目安）</span>
     </div>
   </div>
@@ -116,6 +116,8 @@ tr:first-child td { border-top: 0; }
         <button type="button" data-mode="wedge_R" aria-pressed="false">印刷: 右ウェッジ</button>
         <button type="button" data-mode="coupon_L" aria-pressed="false">テスト片: 左</button>
         <button type="button" data-mode="coupon_R" aria-pressed="false">テスト片: 右</button>
+        <button type="button" data-mode="coupon_sw" aria-pressed="false">テスト片: スイッチ</button>
+        <button type="button" data-mode="sw_lid" aria-pressed="false">印刷: スイッチのふた</button>
       </div>
       <div id="asm-ctl" style="display:flex;flex-direction:column;gap:10px">
         <div class="slider">
@@ -142,6 +144,7 @@ tr:first-child td { border-top: 0; }
         <dt>ウェッジ</dt><dd>200.4 × 211.7 mm（置き場一体、ハの字の向きのまま印刷）。厚さ 5.4 で全体が同じ高さ</dd>
         <dt>ヒンジ</dt><dd>スガツネ HG-TS03（トルク 0.35 N·m、フリーストップ）2 個を同じ軸に前後に並べる（1 個よりねじれ・がたつきに強い）。羽根を左右のウェッジの底に面一で埋め、M4 の皿小ねじ（六角穴付き）を上から通して底の薄型ナットで留める。皿頭は上面と面一で、上には何も出ない（電池カバーの付け外しを妨げない）。ネジはケースの外（左右の間）に来るよう、ウェッジの内側に張り出しを付けてある。中心 y = −26 と −76（間隔 50 mm。張り出しの中で前後対称：ヒンジどうしの間は 18 mm、奥・手前の余白は約 12 mm）。張り出しは 2 個をまたぐ 1 枚。軸は中心線上、底面の 3.05 mm 下。軸筒は底から約 6.8 mm 出る。ヒンジ付近の左右の内側の面は、8° たたんだときに中心面で重なる当たり面で、使用時はここで止まる</dd>
         <dt>ヒンジのネジ</dt><dd>M4×8 六角穴付き皿ボルトを上から（座ぐり Ø9 × 90°、頭は上面と面一）+ 底に薄型ナット。全部たたんだとき向き合うナットどうしのすきまは約 0.9 mm</dd>
+        <dt>開閉検出スイッチ</dt><dd>オムロン D2F-01（ピン押しボタン形、微小負荷用）を左右に 1 個ずつ、どちらも 2 個のヒンジの間の中央に置く。左右でスイッチの向きを反対にし、それぞれの押しボタン（本体の中心から約 2 mm 寄っている）が相手のスイッチ本体の平らな面を押す。使用時の角度まで開くと ON、たたむと OFF（たたんだとき出るのは当たり面から 1 mm 以下の押しボタンだけ）。それぞれのキーボードの電池 + 線に直列に入れる（COM と NO）。スイッチは使用時に水平になるよう 8° 傾けて底のポケットに入れ、スイッチの上は閉じた床。底のふた（ピン 2 本をスイッチの取付穴に差す）を M2×8 皿小ねじ 2 本（上から、頭は上面と面一）とふたに埋めた M2 ナットで留める。ナットは六角のくぼみで回らず、上からドライバーだけで締められる。ふたの長穴で前後 ±0.55 mm 調整。配線はふたの上の溝を通り、ケースの内側の辺のきわ（電池カバーの壁の真下）の小さな長穴から上へ抜ける</dd>
         <dt>たたみ</dt><dd>片側 8°（使用時、当たり面で止まる）〜 90°（底面どうしが向き合う）で干渉なし</dd>
         <dt>パームレスト置き場</dt><dd>80 × 60 mm、角 R3（パームレストと同じ外形、平ら）。ウェッジより +5° ハの字。2026-11-11 に一体印刷のため 25 mm 奥へ</dd>
       </dl>
@@ -152,6 +155,7 @@ tr:first-child td { border-top: 0; }
       <ol class="steps">
         <li>ウェッジをケースの底に M2×6 で留める。</li>
         <li>ヒンジを付ける：左右のウェッジを並べ、底の掘り込みに HG-TS03 2 個の羽根をはめ（軸筒が外向き）、M4×8 皿ボルト 8 本を上から通し、底で薄型ナットを付ける。ナットを 7 mm のスパナで押さえ、上から六角レンチで締める。頭が上面と面一になったところで止め、締めすぎない（皿は穴を押し広げる）。緩み止め剤を推奨。</li>
+        <li>開閉検出スイッチを付ける：D2F-01 の COM と NO に細い電線をはんだ付けし、押しボタンを内側（当たり面側）、押しボタンの寄っている側を右は奥、左は手前に向けて（左右で反対）底のポケットに入れる。電線は溝を通して長穴から上へ出し、電池カバーの中へ。ふたのくぼみに M2 ナットを入れ、ピンを取付穴に差し、上から M2×8 皿小ねじを仮留め。左右を使用時の角度まで開き、片方を長穴の中央で留め、もう片方のふたを内側へ寄せて左右ともカチッと入ったところから少しだけ押し込んで上から本締め。</li>
         <li>クッションゴム CS-01 を底のくぼみ（Ø8.5 × 深さ 0.5、片側 3 か所：奥の外側の角・外側の縁のケース手前寄り・置き場の手前外側の角）に貼る。テンティングで外側が下がるので、軸筒は机から浮く。ヒンジを付けるときは、平らだと当たり面が重なるので真ん中を少し持ち上げて並べる。</li>
         <li>パームレストを置き場の外形に合わせ、両面テープで貼る。</li>
         <li>たたむ：パームレストは付けたまま、左右の外側を下へ折って底面どうしを合わせる（パームレストは外向きになり、どこにもぶつからない）。トルクヒンジなので、どの角度でもその場で止まる。</li>
@@ -167,6 +171,10 @@ tr:first-child td { border-top: 0; }
         <tr><td>M4×8 六角穴付き皿ボルト（ヒンジ用）</td><td class="n">8</td></tr>
         <tr><td>M4 薄型ナット（3 種、厚さ 2.4）</td><td class="n">8</td></tr>
         <tr><td>M2×6 なべ小ねじ（元の M2×3.5 と交換）</td><td class="n">8</td></tr>
+        <tr><td>オムロン D2F-01 マイクロスイッチ（ピン押しボタン形、開閉検出）</td><td class="n">2</td></tr>
+        <tr><td>スイッチのふた PLA</td><td class="n">2</td></tr>
+        <tr><td>M2×8 皿小ねじ + M2 ナット（ふた用）</td><td class="n">各4</td></tr>
+        <tr><td>細い電線（AWG30 前後、スイッチ〜電池）</td><td class="n">適量</td></tr>
         <tr><td>3M しっかりつくクッションゴム CS-01（丸形 Ø7.9 × 2.2）</td><td class="n">6</td></tr>
         <tr><td>両面テープ（パームレストの固定）</td><td class="n">適量</td></tr>
       </table>
@@ -255,7 +263,7 @@ tr:first-child td { border-top: 0; }
   bedPlane.position.set(bedSize / 2, bedSize / 2, -0.05); bed.add(bedPlane);
   const grid = new THREE.GridHelper(bedSize, 11); grid.rotation.x = Math.PI / 2; grid.position.set(bedSize / 2, bedSize / 2, 0); bed.add(grid);
   const printMeshes = {};
-  for (const k of ['wedge_L', 'wedge_R', 'coupon_L', 'coupon_R']) {
+  for (const k of ['wedge_L', 'wedge_R', 'coupon_L', 'coupon_R', 'coupon_sw', 'sw_lid']) {
     const m = mesh(k, 'wedge');
     m.geometry.computeBoundingBox();
     const bb = m.geometry.boundingBox, c = new THREE.Vector3(); bb.getCenter(c);
@@ -313,6 +321,8 @@ tr:first-child td { border-top: 0; }
     wedge_R: '上面（ケースが載る面・置き場）をベッド側に、ハの字の向きのまま置く。ヒンジの掘り込み（幅約 18 × 長さ 33）・軸筒の逃げ・ネジ頭の座ぐりは上向きに開く。ブリッジは無い。サポート不要。',
     coupon_L: '左ウェッジのヒンジ取付部だけを切り出したもの（上面を下に、本番と同じ向き）。HG-TS03 の羽根のはまり具合とボルトの通りを確認する。',
     coupon_R: '右ウェッジのヒンジ取付部だけを切り出したもの（上面を下に、本番と同じ向き）。HG-TS03 の羽根のはまり具合とボルトの通りを確認する。',
+    coupon_sw: '開閉検出スイッチ（D2F-01）のポケットだけを切り出したもの（右ウェッジの形。上面を下に、本番と同じ向き）。スイッチのはまり具合・ふた・配線の溝と穴を確認する。',
+    sw_lid: 'スイッチを底から押さえるふた（左右で同じ形、2 個印刷）。平らな面を下、ピンを上に。ピンをスイッチの取付穴に差し、六角のくぼみに M2 ナットを入れて上からの皿小ねじで留める。長穴で前後に調整する。',
   };
   function setMode(m) {
     mode = m;

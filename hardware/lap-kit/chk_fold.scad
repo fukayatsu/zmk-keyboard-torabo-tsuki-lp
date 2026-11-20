@@ -9,6 +9,7 @@ module half(sd) fold(sd, th) {
     place(sd) case_stl(sd);
     wedge_world(sd);
     if (hinge) hinge_leaf(sd, barrel = false);  // 軸筒は中心線をまたぐ共有部分なので除く
+    if (hinge) sw_dummy(sd);                    // 開閉検出スイッチの本体・ふた・ネジ
 }
 intersection() {
     half(side);
