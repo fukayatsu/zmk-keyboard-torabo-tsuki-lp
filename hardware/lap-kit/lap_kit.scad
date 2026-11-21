@@ -5,6 +5,9 @@
 //
 // part = "assembly" | "wedge_L" | "wedge_R" | "coupon_L" | "coupon_R" | "coupon_sw" | "sw_lid" (2 個)
 part = "assembly";
+// 開閉検出の方式: "switch" = マイクロスイッチ D2F-01 / "pogo" = 4 連のポゴピン (Mill-Max 825、R 側) と 4 連の受け (319、L 側)
+// (wedge_L/R・coupon_sw・coupon_sw_L・assembly の形が変わる。sw_lid は switch だけで使う)
+sw_type = "switch";
 
 // 公式リポジトリ (sekigon-gonnoc/torabo-tsuki-lp) を ./official に clone して使う
 STL_DIR = "official/3d-models/STL/option/L-size/";
@@ -115,7 +118,43 @@ sw_pin_h = 2.2;
 sw_wire_w = 2.5;
 sw_wire_in = 2.5;
 sw_wire_out = 1;
-function sw_xe() = x_off - sw_yc * tan(splay);   // スイッチの位置でのケースの内側の辺 (world x、平らなとき)
+function sw_xe() = x_off - sw_yc * tan(splay);
+
+// ---------- 開閉検出 (ポゴピン版、sw_type = "pogo") ----------
+// R 側に 4 連のポゴピン (Mill-Max 825-22-004-10-001101)、L 側に 4 連の受け (ターゲット、319-10-104-30-008000)。
+// ピンは使用時に水平 (当たり面に垂直)、1 列を前後 (y) に並べ、中心はスイッチ版と同じ (2 個の丁番の間の中央)。
+// 配線: R はピン 2・3 番に R のキーボードの電池の線、1・4 番を裏で短絡。L は受けの 1・4 番に L の線、2・3 番を短絡。
+// 開くと 4 極が触れて左右とも線がつながる。ヒンジをまたぐ配線は無い。
+// どちらも底に開いたポケットへ底から落とし込み (電線は先にはんだ付け)、接着で留める。押される力は後ろの壁で受ける
+// (ピンは足の付け根の段、受けは絶縁体の背)。壁には足を通す溝 (底に開く)。ふた・ネジは無く、上面に出るのは配線の長穴だけ。
+// 825-22-0XX-10-001101 (メーカーの図。同じ系列でいちばん短い型。…-004101 は先端まで 9.96 で、ほかは同じ): ピッチ 2.54、絶縁体 幅 2.54 × 厚さ 2.79 (4 極で長さ 10.16)、足の付け根の段から
+//   先端まで 7.67 (自由長)、絶縁体の底は段から 1.12、最大ストローク 2.29、押しピン Ø1.07、筒 Ø1.5、つば Ø1.83、段 Ø1.4、
+//   足 Ø0.64 × 2.92
+// 319-10-1XX-30-008000 (カタログ 20.1 の FIG. 2。表面実装用): 絶縁体 幅 2.54 × 厚さ 2.79、全高 4.29 (背に Ø1.12 の足が
+//   1.5 出る)。当たる面は平らな金めっき Ø1.78
+//   (すり鉢形の面・まっすぐな足の 319-10-1XX-00-006000 は面から 4.19 まで胴 Ø1.35、足 Ø0.51 で全長 7.37、すり鉢の深さ約 0.36。
+//    使う場合は pg_t_body = 4.19, pg_t_all = 7.37, pg_cone = 0.36, pg_out = 1.4, pg_rec = 0.2, pg_slot[1] = 1.6, pg_room[1] = 5)
+pg_pitch = 2.54;
+pg_n     = 4;
+pg_len   = pg_pitch * pg_n;   // 絶縁体の長さ (y)
+pg_w     = 2.54;   // 絶縁体の幅 (z)
+pg_clr   = 0.1;    // 絶縁体のまわりのすきま
+pg_z     = 1.3;    // ピンの軸の高さ (使用時の座標)。絶縁体の下の面が当たり面の底の縁とほぼそろう
+pg_out   = 1.2;    // ピンの先端が当たり面から出る量 (自由長)
+pg_rec   = 0.3;    // 受けの面を当たり面から沈める量 (平らな金属が触れにくいように)
+pg_cone  = 0;      // 受けのすり鉢の深さ (平らな面は 0)。押し込み = pg_out - pg_rec - pg_cone = 0.9
+pg_h_tip = 7.67;   // ピン: 足の付け根の段から先端まで
+pg_h_ins = [1.12, 3.91];   // ピン: 絶縁体の範囲 (段から)
+pg_h_tail = 2.92;  // ピン: 足の長さ
+pg_t_ins = 2.79;   // 受け: 絶縁体の厚さ
+pg_t_body = 4.29;  // 受け: 面から太い足 (Ø1.12) の端まで
+pg_t_all = 4.29;   // 受け: 全長 (細い足があればその先まで)
+pg_wall  = [1.0, 0.8];     // 後ろの壁の厚さ [ピン側, 受け側]
+pg_slot  = [1.0, 1.5];     // 壁の溝の幅 [ピンの足 Ø0.64, 受けの足 Ø1.12]
+pg_room  = [4.0, 3.0];     // 壁の後ろの配線の場所の長さ (x)
+pg_dummy_out = 0.28;  // 確認用の形でピンの先端を当たり面から出す量 (相手の受けの面のすぐ手前 = 押された位置。たたむ確認では pg_out)
+function pg_ys() = [for (i = [0 : pg_n - 1]) (i - (pg_n - 1) / 2) * pg_pitch];
+function pg_xs() = pg_h_tip - pg_out;   // ピン: 足の付け根の段の位置 (x)
 // ウェッジの厚さ: 置き場部分と同じ (2026-11-11 に 8.65 から変更。ポケット・磁石が無くなったため)
 wedge_t  = pl_t;
 
@@ -303,7 +342,43 @@ module sw_cut0() let(hl = sw_len / 2 + sw_clr, zt = sw_ztop(sw_xt) - sw_floor / 
             cylinder(d1 = sw_bolt, d2 = sw_csk_d + 0.02, h = (sw_csk_d - sw_bolt) / 2 + 0.01, $fn = 32);
     }
 }
-module sw_cuts(side) sw_frame(side) sw_cut0();
+module sw_cuts(side) sw_frame(side) { if (sw_type == "pogo") pg_cut0(side == "R"); else sw_cut0(); }
+
+// ポゴピン版: ウェッジから除く部分 (R 向き)。pin = true でピン側 (R)、false で受け側 (L)
+module pg_cut0(pin) let(hl = pg_len / 2 + pg_clr, k = pin ? 0 : 1,
+                        x0 = pin ? pg_xs() - pg_h_ins[1] - pg_clr : -1,       // 絶縁体の場所の内側の端
+                        x1 = pin ? pg_xs() + pg_clr : pg_rec + pg_t_ins + pg_clr,   // 壁の内側の面 (押される力を受ける)
+                        x2 = x1 + pg_wall[k], x3 = x2 + pg_room[k]) {
+    sw_use() {
+        // 絶縁体 (ピン側はつば・段まで) の場所。底に開く
+        translate([x0, -hl, -20]) cube([x1 - x0, 2 * hl, 20 + pg_z + pg_w / 2 + pg_clr]);
+        // ピン側: 筒と押しピンが当たり面へ抜ける溝
+        if (pin) translate([-1, -(pg_ys()[pg_n - 1] + 0.95), -20]) cube([x0 + 1.01, 2 * (pg_ys()[pg_n - 1] + 0.95), 20 + pg_z + 0.9]);
+        // 壁の溝 (足が通る)
+        for (y = pg_ys()) translate([x1 - 0.01, y - pg_slot[k] / 2, -20]) cube([pg_wall[k] + 0.02, pg_slot[k], 20 + pg_z + pg_slot[k] / 2 + 0.1]);
+        // 壁の後ろの配線の場所
+        translate([x2, -hl, -20]) cube([x3 - x2, 2 * hl, 20 + pg_z + 1.0]);
+        // 上面へ抜ける長穴 (スイッチ版と同じ位置)
+        translate([sw_xe() - sw_wire_in, -sw_wire_w / 2, -20]) cube([sw_wire_in + sw_wire_out, sw_wire_w, 40]);
+    }
+    // 配線の溝 (底面に沿う。半身の座標)
+    translate([x3 - 1.5, -sw_wire_w / 2, -1]) cube([sw_xe() - x3 + 1, sw_wire_w, 1 + 1.6]);
+}
+// ポゴピンと受けの形 (確認用)
+module pg_dummy0(pin) sw_use() {
+    if (pin) {
+        translate([pg_xs() - pg_h_ins[1], -pg_len / 2, pg_z - pg_w / 2]) cube([pg_h_ins[1] - pg_h_ins[0], pg_len, pg_w]);
+        for (y = pg_ys()) translate([0, y, pg_z]) rotate([0, 90, 0]) {
+            translate([0, 0, -pg_dummy_out]) cylinder(d = 1.07, h = pg_xs() + pg_dummy_out, $fn = 16);
+            translate([0, 0, pg_xs() - pg_h_tip + 2.29]) cylinder(d = 1.5, h = pg_h_tip - 2.29, $fn = 16);
+            translate([0, 0, pg_xs() - pg_h_ins[0]]) cylinder(d = 1.83, h = 0.41, $fn = 16);
+            translate([0, 0, pg_xs()]) cylinder(d = 0.64, h = pg_h_tail, $fn = 12);
+        }
+    } else {
+        translate([pg_rec, -pg_len / 2, pg_z - pg_w / 2]) cube([pg_t_ins, pg_len, pg_w]);
+        for (y = pg_ys()) translate([pg_rec, y, pg_z]) rotate([0, 90, 0]) { cylinder(d = 1.12, h = pg_t_body, $fn = 12); cylinder(d = 0.51, h = pg_t_all, $fn = 12); }
+    }
+}
 // ふた (R 向き)。左右で同じ形 (前後対称なので、左右反転 = 180° 回転)
 module sw_lid0() {
     difference() {
@@ -345,7 +420,10 @@ module sw_dummy0(pin_y = sw_pin_y) {
         translate([0, 0, sw_lid_z0]) cylinder(d = nut_cd(4), h = sw_nut_h, $fn = 6);
     }
 }
-module sw_dummy(side) sw_frame(side) sw_dummy0(side == "R" ? sw_pin_y : -sw_pin_y);
+module sw_dummy(side) sw_frame(side) {
+    if (sw_type == "pogo") pg_dummy0(side == "R");
+    else sw_dummy0(side == "R" ? sw_pin_y : -sw_pin_y);
+}
 
 /* ---------- パームレスト置き場 ---------- */
 
@@ -402,8 +480,8 @@ module coupon_world(side) {
 }
 
 // テスト片: 開閉検出スイッチのポケットだけ切り出し (スイッチのはまり具合・ふた・配線の穴を確認)。R 側の形
-module coupon_sw_world() intersection() {
-    wedge_world("R");
+module coupon_sw_world(side = "R") mirror([side == "L" ? 1 : 0, 0, 0]) intersection() {
+    mirror([side == "L" ? 1 : 0, 0, 0]) wedge_world(side);
     translate([-3, sw_yc - sw_len / 2 - 2.3, -1]) cube([sw_xe() + sw_wire_out + 5, sw_len + 4.6, 100]);
 }
 
@@ -449,6 +527,9 @@ else if (part == "assembly") {
     print_pose("R") coupon_world("R");
 } else if (part == "coupon_sw") {
     print_pose("R") coupon_sw_world();
+} else if (part == "coupon_sw_L") {
+    // L 側の形 (ポゴピン版の受け側の確認用)
+    print_pose("L") coupon_sw_world("L");
 } else if (part == "sw_lid") {
     // ふた: 平らな面を下、ピンを上にして印刷
     translate([-sw_lid_x0, 0, -sw_lid_z0]) sw_lid0();

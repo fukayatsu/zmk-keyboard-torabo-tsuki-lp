@@ -102,7 +102,7 @@ tr:first-child td { border-top: 0; }
     <div class="legend" id="legend">
       <span style="--c: var(--case)">ケース（簡略形状）</span>
       <span style="--c: var(--accent)">ウェッジ（置き場一体）</span>
-      <span style="--c: #c9ced3">ヒンジ HG-TS03・開閉検出スイッチ</span>
+      <span style="--c: #c9ced3">ヒンジ HG-TS03・開閉検出（スイッチ / ポゴピン）</span>
       <span style="--c: #7d858e">パームレスト（目安）</span>
     </div>
   </div>
@@ -118,8 +118,16 @@ tr:first-child td { border-top: 0; }
         <button type="button" data-mode="coupon_R" aria-pressed="false">テスト片: 右</button>
         <button type="button" data-mode="coupon_sw" aria-pressed="false">テスト片: スイッチ</button>
         <button type="button" data-mode="sw_lid" aria-pressed="false">印刷: スイッチのふた</button>
+        <button type="button" data-mode="wedge_L_pogo" aria-pressed="false">ポゴピン版: 左ウェッジ</button>
+        <button type="button" data-mode="wedge_R_pogo" aria-pressed="false">ポゴピン版: 右ウェッジ</button>
+        <button type="button" data-mode="coupon_pogo" aria-pressed="false">ポゴピン版: テスト片（ピン側）</button>
+        <button type="button" data-mode="coupon_pogo_L" aria-pressed="false">ポゴピン版: テスト片（受け側）</button>
       </div>
       <div id="asm-ctl" style="display:flex;flex-direction:column;gap:10px">
+        <div class="seg" id="variant" aria-label="開閉検出の方式">
+          <button type="button" data-variant="switch" aria-pressed="true">スイッチ版</button>
+          <button type="button" data-variant="pogo" aria-pressed="false">ポゴピン版</button>
+        </div>
         <div class="slider">
           <span>使用 8°</span>
           <input type="range" id="fold" min="0" max="1" step="0.01" value="0" aria-label="ヒンジでたたむ（使用時 8° から 90° まで）">
@@ -248,9 +256,12 @@ tr:first-child td { border-top: 0; }
     wedgeL: mesh('w_wedge_L', 'wedge'), wedgeR: mesh('w_wedge_R', 'wedge'),
     hingeL: mesh('w_hinge_L', 'hinge', true), hingeR: mesh('w_hinge_R', 'hinge', true),
     restL: mesh('w_rest_L', 'rest'), restR: mesh('w_rest_R', 'rest'),
+    // ポゴピン版 (開閉検出の方式の切り替えで入れ替える)
+    wedgeLp: mesh('w_wedge_L_pogo', 'wedge'), wedgeRp: mesh('w_wedge_R_pogo', 'wedge'),
+    hingeLp: mesh('w_hinge_L_pogo', 'hinge', true), hingeRp: mesh('w_hinge_R_pogo', 'hinge', true),
   };
-  L.add(parts.caseL, parts.wedgeL); R.add(parts.caseR, parts.wedgeR);
-  FLi.add(parts.hingeL); FRi.add(parts.hingeR);
+  L.add(parts.caseL, parts.wedgeL, parts.wedgeLp); R.add(parts.caseR, parts.wedgeR, parts.wedgeRp);
+  FLi.add(parts.hingeL, parts.hingeLp); FRi.add(parts.hingeR, parts.hingeRp);
   L.add(parts.restL); R.add(parts.restR);
   mats.rest.transparent = true; mats.rest.opacity = 0.45; mats.rest.depthWrite = false;
 
@@ -263,7 +274,7 @@ tr:first-child td { border-top: 0; }
   bedPlane.position.set(bedSize / 2, bedSize / 2, -0.05); bed.add(bedPlane);
   const grid = new THREE.GridHelper(bedSize, 11); grid.rotation.x = Math.PI / 2; grid.position.set(bedSize / 2, bedSize / 2, 0); bed.add(grid);
   const printMeshes = {};
-  for (const k of ['wedge_L', 'wedge_R', 'coupon_L', 'coupon_R', 'coupon_sw', 'sw_lid']) {
+  for (const k of ['wedge_L', 'wedge_R', 'coupon_L', 'coupon_R', 'coupon_sw', 'sw_lid', 'wedge_L_pogo', 'wedge_R_pogo', 'coupon_pogo', 'coupon_pogo_L']) {
     const m = mesh(k, 'wedge');
     m.geometry.computeBoundingBox();
     const bb = m.geometry.boundingBox, c = new THREE.Vector3(); bb.getCenter(c);
@@ -322,6 +333,10 @@ tr:first-child td { border-top: 0; }
     coupon_L: '左ウェッジのヒンジ取付部だけを切り出したもの（上面を下に、本番と同じ向き）。HG-TS03 の羽根のはまり具合とボルトの通りを確認する。',
     coupon_R: '右ウェッジのヒンジ取付部だけを切り出したもの（上面を下に、本番と同じ向き）。HG-TS03 の羽根のはまり具合とボルトの通りを確認する。',
     coupon_sw: '開閉検出スイッチ（D2F-01）のポケットだけを切り出したもの（右ウェッジの形。上面を下に、本番と同じ向き）。スイッチのはまり具合・ふた・配線の溝と穴を確認する。',
+    wedge_L_pogo: '開閉検出をポゴピンにした版の左（受け側）。ヒンジの間の当たり面に、4 連の受け（Mill-Max 319-10-104-30-008000）を底から落とし込むポケットがある。ふたとネジは無い。置き方はスイッチ版と同じ（上面をベッド側、サポート不要）。',
+    wedge_R_pogo: '開閉検出をポゴピンにした版の右（ピン側）。ヒンジの間の当たり面に、4 連のポゴピン（Mill-Max 825-22-004-10-001101）を底から落とし込むポケットがある。ふたとネジは無い。置き方はスイッチ版と同じ（上面をベッド側、サポート不要）。',
+    coupon_pogo: 'ポゴピン版のピン側（右ウェッジ）の取付部だけを切り出したもの（上面を下に）。4 連ピンのはまり具合、先端の出しろ（約 1.2 mm）、足を通す壁の溝、配線の溝と穴を確認する。',
+    coupon_pogo_L: 'ポゴピン版の受け側（左ウェッジ）の取付部だけを切り出したもの（上面を下に）。4 連の受けのはまり具合、当たり面からの沈み（約 0.3 mm）、足を通す壁の溝、配線の溝と穴を確認する。',
     sw_lid: 'スイッチを底から押さえるふた（左右で同じ形、2 個印刷）。平らな面を下、ピンを上に。ピンをスイッチの取付穴に差し、六角のくぼみに M2 ナットを入れて上からの皿小ねじで留める。長穴で前後に調整する。',
   };
   function setMode(m) {
@@ -355,8 +370,27 @@ tr:first-child td { border-top: 0; }
 
   const deg = Math.PI / 180;
 
-  const vis = { 'v-case': () => [parts.caseL, parts.caseR], 'v-wedge': () => [parts.wedgeL, parts.wedgeR], 'v-bridge': () => [parts.hingeL, parts.hingeR], 'v-rest': () => [parts.restL, parts.restR] };
-  for (const id in vis) document.getElementById(id).addEventListener('change', (e) => vis[id]().forEach((o) => (o.visible = e.target.checked)));
+  // 表示の切り替え。ウェッジとヒンジ (開閉検出の部品を含む) は方式ごとに別の形
+  let variant = 'switch';
+  const vis = {
+    'v-case': () => [[parts.caseL, parts.caseR], []],
+    'v-wedge': () => [[parts.wedgeL, parts.wedgeR], [parts.wedgeLp, parts.wedgeRp]],
+    'v-bridge': () => [[parts.hingeL, parts.hingeR], [parts.hingeLp, parts.hingeRp]],
+    'v-rest': () => [[parts.restL, parts.restR], []],
+  };
+  function applyVis() {
+    for (const id in vis) {
+      const on = document.getElementById(id).checked, [a, b] = vis[id]();
+      a.forEach((o) => (o.visible = on && (b.length === 0 || variant === 'switch')));
+      b.forEach((o) => (o.visible = on && variant === 'pogo'));
+    }
+    document.querySelectorAll('#variant button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.variant === variant)));
+  }
+  for (const id in vis) document.getElementById(id).addEventListener('change', applyVis);
+  document.getElementById('variant').addEventListener('click', (e) => {
+    const b = e.target.closest('button[data-variant]'); if (b) { variant = b.dataset.variant; applyVis(); }
+  });
+  applyVis();
 
   function resize() {
     const w = stage.clientWidth, h = stage.clientHeight;
